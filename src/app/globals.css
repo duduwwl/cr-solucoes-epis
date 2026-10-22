@@ -407,7 +407,9 @@ h1, h2, h3 { text-wrap: balance; }
 .brand-premium { width: 64px; height: 64px; justify-content: flex-start; gap: 0; }
 .brand-logo-original { width: 64px; height: 64px; flex: 0 0 64px; border-radius: 50%; object-fit: cover; }
 .navlinks-premium { min-width: 0; flex: 1 1 auto; justify-content: center; gap: clamp(18px, 2.8vw, 38px); align-self: center; }
-.navlinks-premium > a, .nav-lines > a { display: flex; align-items: center; white-space: nowrap; }
+.navlinks-premium .nav-icon { width: 34px; height: 34px; display: grid; place-items: center; border: 1px solid transparent; border-radius: 50%; color: #d8d3ca; transition: color .18s ease, border-color .18s ease, background .18s ease; }
+.navlinks-premium .nav-icon svg { width: 16px; height: 16px; stroke-width: 1.8; }
+.navlinks-premium .nav-icon:hover, .navlinks-premium .nav-icon:focus-visible { border-color: #686158; background: #242320; color: var(--orange); }
 .navright-premium { flex: 0 0 auto; align-items: center; gap: 22px; }
 .nav-phone { display: inline-flex; align-items: center; white-space: nowrap; color: #f4f1eb; font-variant-numeric: tabular-nums; line-height: 1; }
 .nav-phone small, .nav-contact { display: none !important; }
