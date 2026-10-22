@@ -5,7 +5,6 @@ import { FormEvent, useEffect, useMemo, useState } from 'react';
 import { InView } from '@/components/ui/in-view';
 import { AnimatedGroup } from '@/components/ui/animated-group';
 import { VerticalCutReveal } from '@/components/fancy/vertical-cut-reveal';
-import { Building2, CircleHelp, Grid2X2, HardHat } from 'lucide-react';
 import Faq from '@/components/faq';
 
 export const cats = [
@@ -95,10 +94,9 @@ export function Header() {
     <div className="wrap nav nav-premium">
       <Brand />
       <nav className="navlinks navlinks-premium" aria-label="Navegação principal">
-        <Link className="nav-icon" href="/produtos" aria-label="Produtos" title="Produtos"><Grid2X2 aria-hidden="true" /></Link>
-        <Link className="nav-icon" href="/categorias/capacetes" aria-label="Linhas de proteção" title="Linhas de proteção"><HardHat aria-hidden="true" /></Link>
-        <Link className="nav-icon" href="/empresas" aria-label="Para empresas" title="Para empresas"><Building2 aria-hidden="true" /></Link>
-        <Link className="nav-icon" href="/sobre" aria-label="Sobre a CR" title="Sobre a CR"><CircleHelp aria-hidden="true" /></Link>
+        <Link href="/produtos">Produtos</Link>
+        <Link href="/empresas">Para empresas</Link>
+        <Link href="/sobre">Sobre a CR</Link>
       </nav>
       <div className="navright navright-premium"><a className="nav-phone" href="tel:+553541046700">(35) 4104-6700</a><Link className="nav-cart-premium" href="/carrinho">Carrinho <span>{count}</span></Link><button className="mobile-menu" onClick={() => document.getElementById('mobileNav')?.classList.toggle('show')}>Menu</button></div>
     </div>
