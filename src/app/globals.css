@@ -330,7 +330,7 @@ h1, h2, h3 { text-wrap: balance; }
 .hero-stage:hover .hero-slide.active img { transform: scale(1.025) translateY(-4px); }
 .hero-stage .hero-slide-copy { left: 34px; right: 34px; bottom: 66px; }
 .hero-stage .hero-slide-copy strong { font-size: 20px; }
-.hero-stage .hero-carousel-controls { left: 21px; right: 21px; bottom: 21px; background: transparent; border: 0; text-shadow: 0 1px 8px #000; }
+.hero-stage .hero-carousel-controls { left: 21px; right: 21px; bottom: 21px; justify-content: center; background: transparent; border: 0; text-shadow: 0 1px 8px #000; }
 .hero-stage .hero-carousel-controls button:hover { background: transparent; color: var(--orange); }
 .hero-progress { width: min(210px, 36%); display: flex; gap: 5px; }
 .hero-progress button { width: 100%; min-width: 0; height: 3px; padding: 0; background: #59544d; }

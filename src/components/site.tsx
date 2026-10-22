@@ -136,12 +136,10 @@ const heroItems = products.filter((p) => ['bota-gogowear-caramelo', 'capacete-de
 function HeroCarousel() {
   const [active, setActive] = useState(0);
   useEffect(() => { const id = window.setInterval(() => setActive((current) => (current + 1) % heroItems.length), 3600); return () => window.clearInterval(id); }, []);
-  const previous = () => setActive((current) => (current - 1 + heroItems.length) % heroItems.length);
-  const next = () => setActive((current) => (current + 1) % heroItems.length);
   return <div className="hero-carousel hero-stage" aria-roledescription="carrossel" aria-label="Seleção de produtos CR">
     <div className="hero-stage-label">SELEÇÃO PROFISSIONAL</div>
     {heroItems.map((item, index) => <div className={`hero-slide ${index === active ? 'active' : ''}`} key={item.slug} aria-hidden={index !== active}><img src={assetPath(item.image)} alt={item.name}/><div className="hero-slide-copy"><span>{item.label}</span><strong>{item.name}</strong><small>{money.format(item.price)}</small></div></div>)}
-    <div className="hero-carousel-controls"><button type="button" onClick={previous}>Anterior</button><div className="hero-progress">{heroItems.map((item,index)=><button key={item.slug} aria-label={`Mostrar ${item.name}`} className={index===active?'active':''} onClick={()=>setActive(index)}/>)}</div><button type="button" onClick={next}>Próximo</button></div>
+    <div className="hero-carousel-controls"><div className="hero-progress">{heroItems.map((item,index)=><button key={item.slug} aria-label={`Mostrar ${item.name}`} className={index===active?'active':''} onClick={()=>setActive(index)}/>)}</div></div>
   </div>;
 }
 
