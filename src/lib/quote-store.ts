@@ -124,7 +124,7 @@ export function quoteMessage(items: QuoteItem[], who: Requester = {}) {
   if (who.city?.trim()) tail.push(`Cidade para entrega ou retirada: ${who.city.trim()}`);
   if (who.note?.trim()) tail.push(`Observações: ${who.note.trim()}`);
   if (tail.length) parts.push('', ...tail);
-  parts.push('', 'Poderiam informar disponibilidade, tamanhos, CA e valores?');
+  parts.push('', 'Poderiam informar disponibilidade, tamanhos e valores?');
   return parts.join('\n');
 }
 

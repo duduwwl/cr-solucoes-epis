@@ -1,5 +1,4 @@
 import type { Metadata, Viewport } from 'next';
-import '@fontsource-variable/archivo/wdth.css';
 import './globals.css';
 import { Providers } from '@/components/providers';
 import { SITE, assetPath } from '@/lib/site';
@@ -16,7 +15,7 @@ export const metadata: Metadata = {
     type: 'website',
     locale: 'pt_BR',
     siteName: SITE.name,
-    title: 'CR Soluções em EPIs | Da cabeça aos pés',
+    title: 'CR Soluções em EPIs | Proteção para o seu trabalho',
     description: SITE.description,
     url: './',
     images: [{ url: 'og.jpg', width: 1200, height: 630, alt: 'Capacete de proteção laranja sobre fundo grafite, com a marca CR Soluções em EPIs' }],
@@ -27,7 +26,7 @@ export const metadata: Metadata = {
 };
 
 export const viewport: Viewport = {
-  themeColor: '#1a1a19',
+  themeColor: '#171716',
   width: 'device-width',
   initialScale: 1,
 };

@@ -17,19 +17,15 @@ export function QuoteSheet() {
 
   return (
     <Dialog.Root open={open} onOpenChange={(o) => quote.open(o)}>
-      <SheetContent
-        title="Lista de orçamento"
-        description="Junte os itens, informe quantidades e tamanhos e envie tudo em uma única mensagem para a loja."
-        className="quote-sheet"
-      >
+      <SheetContent title="Lista de orçamento" description="Junte os itens, informe quantidades e tamanhos e envie tudo em uma única mensagem para a loja." className="quote-sheet">
         <div className="sheet-body">
           {items.length === 0 ? (
             <div className="quote-empty">
               <p>Nenhum item na lista ainda.</p>
-              <p className="muted">No catálogo, use “Adicionar à lista” em cada produto que sua equipe precisa.</p>
+              <p className="muted">No catálogo, use “Adicionar à lista” nos produtos que você ou a sua equipe precisam.</p>
               <Dialog.Close asChild>
-                <Link className="btn btn-accent" href="/produtos/">
-                  Ir para o catálogo
+                <Link className="pill hot" href="/produtos/">
+                  Ver produtos
                 </Link>
               </Dialog.Close>
             </div>
@@ -41,6 +37,7 @@ export function QuoteSheet() {
                     const p = productBySlug(item.slug);
                     if (!p) return null;
                     const pic = img(p.images[0]);
+                    const hint = p.sizeHint === 'Numeração' ? 'Numeração (ex.: 40, 42)' : p.sizeHint ? 'Tamanho (ex.: M, G, GG)' : 'Tamanho ou observação';
                     return (
                       <motion.li
                         key={item.slug}
@@ -54,27 +51,24 @@ export function QuoteSheet() {
                         <div className={`quote-thumb ${pic.cutout ? 'is-cutout' : ''}`}>
                           <img src={pic.src} srcSet={pic.srcSet} sizes="72px" width={pic.width} height={pic.height} alt="" loading="lazy" />
                         </div>
-                        <div className="quote-item-body">
+                        <div>
                           <div className="quote-item-top">
                             <Dialog.Close asChild>
                               <Link href={`/produtos/${p.slug}/`} className="quote-item-name">
                                 {p.name}
                               </Link>
                             </Dialog.Close>
-                            <button type="button" className="text-button" onClick={() => quote.remove(item.slug)} aria-label={`Remover ${p.name} da lista`}>
+                            <button type="button" className="remove-button" onClick={() => quote.remove(item.slug)} aria-label={`Remover ${p.name} da lista`}>
                               Remover
                             </button>
                           </div>
                           <div className="quote-item-controls">
                             <QtyStepper value={item.qty} onChange={(v) => quote.setQty(item.slug, v)} label={`Quantidade de ${p.name}`} />
-                            <label className="field field-inline">
-                              <span className="sr-only">{p.sizeHint ?? 'Tamanho ou modelo'} de {p.name}</span>
-                              <input
-                                value={item.size}
-                                onChange={(e) => quote.setSize(item.slug, e.target.value)}
-                                placeholder={p.sizeHint === 'Numeração' ? 'Numeração (ex.: 40, 42)' : p.sizeHint ? 'Tamanho (ex.: M, G, GG)' : 'Tamanho ou observação'}
-                                maxLength={40}
-                              />
+                            <label className="quote-size">
+                              <span className="sr-only">
+                                {p.sizeHint ?? 'Tamanho ou observação'} de {p.name}
+                              </span>
+                              <input className="search-input" value={item.size} onChange={(e) => quote.setSize(item.slug, e.target.value)} placeholder={hint} maxLength={40} />
                             </label>
                           </div>
                         </div>
@@ -83,36 +77,34 @@ export function QuoteSheet() {
                   })}
                 </AnimatePresence>
               </ul>
-
               <fieldset className="quote-who">
                 <legend>Para quem é o orçamento</legend>
-                <label className="field">
-                  <span>Seu nome</span>
-                  <input autoComplete="name" value={who.name ?? ''} onChange={(e) => setWho({ ...who, name: e.target.value })} />
+                <label className="formlabel">
+                  Seu nome
+                  <input className="search-input" autoComplete="name" value={who.name ?? ''} onChange={(e) => setWho({ ...who, name: e.target.value })} />
                 </label>
-                <label className="field">
-                  <span>Empresa (opcional)</span>
-                  <input autoComplete="organization" value={who.company ?? ''} onChange={(e) => setWho({ ...who, company: e.target.value })} />
+                <label className="formlabel">
+                  Empresa (opcional)
+                  <input className="search-input" autoComplete="organization" value={who.company ?? ''} onChange={(e) => setWho({ ...who, company: e.target.value })} />
                 </label>
-                <label className="field">
-                  <span>Cidade para entrega ou retirada</span>
-                  <input autoComplete="address-level2" value={who.city ?? ''} onChange={(e) => setWho({ ...who, city: e.target.value })} />
+                <label className="formlabel">
+                  Cidade para entrega ou retirada
+                  <input className="search-input" autoComplete="address-level2" value={who.city ?? ''} onChange={(e) => setWho({ ...who, city: e.target.value })} />
                 </label>
               </fieldset>
-
               <details className="quote-preview">
                 <summary>Ver a mensagem que será enviada</summary>
-                <pre>{quoteMessage(items, who)}</pre>
+                <p>{quoteMessage(items, who)}</p>
               </details>
             </>
           )}
         </div>
         {items.length > 0 && (
           <div className="sheet-foot">
-            <a className="btn btn-accent btn-block" href={quoteLink(items, who)} target="_blank" rel="noreferrer">
+            <a className="pill hot" href={quoteLink(items, who)} target="_blank" rel="noreferrer">
               Enviar {total} {total === 1 ? 'item' : 'itens'} pelo WhatsApp
             </a>
-            <button type="button" className="btn btn-quiet btn-block" onClick={() => quote.clear()}>
+            <button type="button" className="pill" onClick={() => quote.clear()}>
               Limpar lista
             </button>
           </div>
