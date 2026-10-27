@@ -259,6 +259,7 @@ export function CatalogCard({ p }: { p: Product }) {
           <Link href={`/produtos/${p.slug}/`}>{p.name}</Link>
         </h3>
         <p className="product-description">{p.description}</p>
+        {p.priceFrom && <p className="product-price">A partir de {p.priceFrom}</p>}
         <div className="product-bottom">
           <AddToQuote slug={p.slug} name={p.name} />
           <a href={whatsappLink(productMessage(p.name))} target="_blank" rel="noreferrer" className="product-wa">
@@ -282,7 +283,7 @@ export function CatalogGrid({ items }: { items: Product[] }) {
 
 /* ───────────── Início ───────────── */
 
-const heroItems = ['bota-gogowear-caramelo', 'capacete-de-protecao', 'bota-pvc-branca', 'vestimenta-camara-fria', 'avental-vinil', 'extintor-incendio']
+const heroItems = ['bota-gogowear-caramelo', 'capacete-de-protecao', 'luva-multitato', 'bota-pvc-branca', 'cinto-paraquedista', 'protetor-concha-capacete', 'extintor-incendio']
   .map((slug) => productBySlug(slug)!)
   .filter(Boolean);
 
@@ -319,7 +320,7 @@ function HeroCarousel() {
           aria-hidden={index !== active}
           tabIndex={index === active ? 0 : -1}
         >
-          <ProductImage name={item.images[0]} alt={item.name} sizes="(min-width: 820px) 50vw, 92vw" eager={index === 0} />
+          <ProductImage name={item.images[0].replace(/^w-/, 't-')} alt={item.name} sizes="(min-width: 820px) 50vw, 92vw" eager={index === 0} />
           <div className="hero-slide-copy">
             <span>{categoryBySlug(item.category)?.name}</span>
             <strong>{item.name}</strong>
@@ -357,7 +358,7 @@ function Categories() {
             <div className="eyebrow orange">LINHAS DE PROTEÇÃO</div>
             <h2 id="categorias-titulo">Encontre pela necessidade.</h2>
           </div>
-          <p className="section-intro">Seis linhas no catálogo, da bota ao extintor. Escolha uma para ver os modelos e pedir orçamento.</p>
+          <p className="section-intro">Nove linhas e mais de 40 produtos, da bota ao extintor. Escolha uma para ver os modelos e pedir orçamento.</p>
         </InView>
         <AnimatedGroup preset="blur-slide" className="category-grid">
           {categories.map((c) => {
@@ -395,7 +396,7 @@ export function HomePage() {
                 </VerticalCutReveal>
               </h1>
               <TextEffect per="line" as="p" preset="fade-in-blur" delay={0.45} speedSegment={0.5} className="hero-sub">
-                Calçados de segurança, capacetes, vestimentas e proteção auditiva para profissionais e empresas. Loja em Lavras/MG e envio para todo o Brasil.
+                Calçados de segurança, capacetes, luvas, uniformes e vestimentas para profissionais e empresas. Loja em Lavras/MG e envio para todo o Brasil.
               </TextEffect>
               <div className="hero-actions">
                 <Magnetic intensity={0.2} range={110}>
@@ -765,6 +766,11 @@ export function DetailPage({ slug }: { slug: string }) {
             <h1>{p.name}</h1>
             <div className="product-meta">{p.brand}</div>
             <p>{p.description}</p>
+            {p.priceFrom && (
+              <p className="detail-price">
+                A partir de {p.priceFrom} <small>valor divulgado pela loja; confirme no orçamento</small>
+              </p>
+            )}
             <ul className="feature-list">
               {p.features.map((feature) => (
                 <li key={feature}>{feature}</li>
