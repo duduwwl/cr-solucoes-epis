@@ -1,0 +1,178 @@
+{
+ "auditiva-referencia": {
+  "w": 535,
+  "h": 710,
+  "sizes": [
+   480,
+   535
+  ],
+  "alpha": false
+ },
+ "avental-vinil-referencia": {
+  "w": 310,
+  "h": 795,
+  "sizes": [
+   310
+  ],
+  "alpha": false
+ },
+ "avental-vinil-v2": {
+  "w": 608,
+  "h": 1479,
+  "sizes": [
+   480,
+   608
+  ],
+  "alpha": true
+ },
+ "bota-pvc-branca-v2": {
+  "w": 1110,
+  "h": 1154,
+  "sizes": [
+   480,
+   960,
+   1110
+  ],
+  "alpha": true
+ },
+ "bota-pvc-referencia": {
+  "w": 360,
+  "h": 585,
+  "sizes": [
+   360
+  ],
+  "alpha": false
+ },
+ "bota-cinza-real": {
+  "w": 605,
+  "h": 856,
+  "sizes": [
+   480,
+   605
+  ],
+  "alpha": false
+ },
+ "bota-gogowear-real": {
+  "w": 605,
+  "h": 856,
+  "sizes": [
+   480,
+   605
+  ],
+  "alpha": false
+ },
+ "bota-marrom-real": {
+  "w": 605,
+  "h": 856,
+  "sizes": [
+   480,
+   605
+  ],
+  "alpha": false
+ },
+ "botina-escura-real": {
+  "w": 605,
+  "h": 856,
+  "sizes": [
+   480,
+   605
+  ],
+  "alpha": false
+ },
+ "camara-fria-referencia": {
+  "w": 300,
+  "h": 505,
+  "sizes": [
+   300
+  ],
+  "alpha": false
+ },
+ "capacete-laranja-v2": {
+  "w": 1233,
+  "h": 886,
+  "sizes": [
+   480,
+   960,
+   1233
+  ],
+  "alpha": true
+ },
+ "capacetes-referencia": {
+  "w": 470,
+  "h": 250,
+  "sizes": [
+   470
+  ],
+  "alpha": false
+ },
+ "extintores-v2": {
+  "w": 1117,
+  "h": 1233,
+  "sizes": [
+   480,
+   960,
+   1117
+  ],
+  "alpha": true
+ },
+ "incendio-referencia": {
+  "w": 395,
+  "h": 420,
+  "sizes": [
+   395
+  ],
+  "alpha": false
+ },
+ "limpeza-referencia": {
+  "w": 445,
+  "h": 470,
+  "sizes": [
+   445
+  ],
+  "alpha": false
+ },
+ "protetor-auditivo-v2": {
+  "w": 1463,
+  "h": 999,
+  "sizes": [
+   480,
+   960,
+   1463
+  ],
+  "alpha": true
+ },
+ "vassoura-profissional-v2": {
+  "w": 793,
+  "h": 1230,
+  "sizes": [
+   480,
+   793
+  ],
+  "alpha": true
+ },
+ "vestimenta-camara-fria-v2": {
+  "w": 681,
+  "h": 1610,
+  "sizes": [
+   480,
+   681
+  ],
+  "alpha": true
+ },
+ "vestimenta-referencia": {
+  "w": 410,
+  "h": 470,
+  "sizes": [
+   410
+  ],
+  "alpha": false
+ },
+ "cr-logo": {
+  "w": 358,
+  "h": 480,
+  "sizes": [
+   358
+  ],
+  "alpha": true
+ }
+}
