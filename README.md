@@ -15,6 +15,17 @@ reunido na lista de orçamento, que fica salva apenas no navegador de quem monta
 - `public/images/products`: fotos originais. `public/images/opt`: versões WebP otimizadas usadas pelo site
   (geradas a partir das originais; o tamanho de cada uma está em `src/data/images.json`).
 
+## Infraestrutura
+
+O projeto é publicado na Vercel e utiliza Neon Postgres provisionado pelo Marketplace da Vercel. As credenciais são variáveis sensíveis do projeto e não fazem parte do repositório.
+
+- `pnpm db:migrate` cria o esquema e semeia as categorias e os produtos de forma idempotente.
+- O comando de build executa a migração antes da compilação, protegida por lock do Postgres para evitar concorrência.
+- `POST /api/orcamentos` valida os dados, confere a origem, usa honeypot e limita requisições por IP anonimizado.
+- `GET /api/produtos` fornece somente o catálogo público, com cache.
+
+Copie `.env.example` somente para desenvolvimento local e preencha valores próprios; não exponha segredos no navegador ou no Git.
+
 ## Desenvolvimento
 
 ```bash
@@ -22,13 +33,12 @@ pnpm install
 pnpm dev
 ```
 
-Build igual ao da publicação:
+Build de produção (inclui a migração idempotente quando as variáveis do banco estiverem disponíveis):
 
 ```bash
-NEXT_PUBLIC_BASE_PATH=/cr-solucoes-epis pnpm build   # gera a pasta out/
+pnpm build
 ```
 
 ## Publicação
 
-O workflow em `.github/workflows/deploy-pages.yml` gera o site estático e publica no GitHub Pages a cada envio para a
-branch `main`.
+O repositório está conectado à Vercel. Cada envio à branch `main` cria uma implantação de produção.

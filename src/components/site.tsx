@@ -828,7 +828,25 @@ export function ContactPage() {
   const [name, setName] = useState('');
   const [message, setMessage] = useState('');
   const [error, setError] = useState('');
+  const [sending, setSending] = useState(false);
+  const [website, setWebsite] = useState('');
   const text = `Olá, sou ${name.trim() || 'cliente'} e gostaria de falar sobre: ${message.trim() || 'EPIs e disponibilidade'}`;
+  async function submitQuote() {
+    if (sending) return;
+    setSending(true);
+    try {
+      await fetch('/api/orcamentos', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ name: name.trim() || 'Cliente', message: message.trim(), website }),
+      });
+    } catch {
+      // O atendimento não deve ficar bloqueado se a gravação estiver temporariamente indisponível.
+    } finally {
+      window.open(whatsappLink(text), '_blank', 'noopener');
+      setSending(false);
+    }
+  }
   return (
     <PageShell>
       <main>
@@ -865,7 +883,7 @@ export function ContactPage() {
                   return;
                 }
                 setError('');
-                window.open(whatsappLink(text), '_blank', 'noopener');
+                void submitQuote();
               }}
             >
               <small>Escreva para a equipe</small>
@@ -884,13 +902,17 @@ export function ContactPage() {
                   aria-describedby={error ? 'contato-erro' : undefined}
                 />
               </label>
+              <label className="honeypot" aria-hidden="true">
+                Site
+                <input tabIndex={-1} autoComplete="off" value={website} onChange={(e) => setWebsite(e.target.value)} />
+              </label>
               {error && (
                 <p id="contato-erro" className="form-error" role="alert">
                   {error}
                 </p>
               )}
-              <button type="submit" className="pill hot">
-                Continuar no WhatsApp
+              <button type="submit" className="pill hot" disabled={sending}>
+                {sending ? 'Abrindo WhatsApp…' : 'Continuar no WhatsApp'}
               </button>
             </form>
           </div>
@@ -980,8 +1002,8 @@ export function AdminPage() {
     <PageShell>
       <main className="wrap page-hero">
         <div className="eyebrow orange">Área administrativa</div>
-        <h1>Painel de gestão em configuração.</h1>
-        <p className="section-intro">O painel exige banco de dados, autenticação e credenciais do responsável. Nenhuma solicitação comercial é armazenada neste site.</p>
+        <h1>Gestão protegida pela Vercel.</h1>
+        <p className="section-intro">Solicitações comerciais são registradas no banco Neon. O acesso de gestão deve ser feito somente por credenciais administrativas configuradas no ambiente; nenhum dado sensível é exposto nesta página pública.</p>
       </main>
     </PageShell>
   );
