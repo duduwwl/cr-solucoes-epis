@@ -6,6 +6,7 @@ import { getDb } from '@/lib/db';
 import { SITE, assetPath, img, pageMeta } from '@/lib/site';
 
 export const dynamicParams = true;
+export const revalidate = 300;
 export function generateStaticParams() {
   return products.map((p) => ({ slug: p.slug }));
 }
@@ -27,7 +28,7 @@ async function databaseProduct(slug: string): Promise<Product | undefined> {
 
 export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }) {
   const slug = (await params).slug;
-  const p = productBySlug(slug) ?? await databaseProduct(slug);
+  const p = (await databaseProduct(slug)) ?? productBySlug(slug);
   if (!p) return {};
   return pageMeta(`/produtos/${p.slug}/`, p.name, `${p.description} ${p.features.join(', ')}. Orçamento pelo WhatsApp com a CR Soluções em EPIs, em Lavras/MG.`, {
     url: rel(productImage(p.images[0])),
@@ -37,7 +38,7 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
 
 export default async function Page({ params }: { params: Promise<{ slug: string }> }) {
   const slug = (await params).slug;
-  const p = productBySlug(slug) ?? await databaseProduct(slug);
+  const p = (await databaseProduct(slug)) ?? productBySlug(slug);
   if (!p) notFound();
   const cat = categoryBySlug(p.category);
   const jsonLd = [

@@ -325,7 +325,6 @@ h1, h2, h3 { text-wrap: balance; }
 .hero-assurance span::before { content: ''; width: 14px; height: 2px; background: var(--orange); }
 .hero-stage { height: min(660px, calc(100vh - 150px)); min-height: 540px; align-self: center; border: 0; background: #262522; box-shadow: 24px 24px 0 var(--orange); }
 .hero-stage::before { content: ''; position: absolute; z-index: 2; inset: 20px; border: 1px solid rgba(255,255,255,.18); pointer-events: none; }
-.hero-stage-label { position: absolute; z-index: 4; top: 31px; left: 34px; color: #d5d0c7; font-size: 9px; font-weight: 670; letter-spacing: .16em; }
 .hero-stage .hero-slide { background: linear-gradient(145deg, #34322e, #191918); }
 .hero-stage .hero-slide img { padding: 70px 50px 118px; transition: transform .8s cubic-bezier(.22,1,.36,1); }
 .hero-stage:hover .hero-slide.active img { transform: scale(1.025) translateY(-4px); }
@@ -725,7 +724,6 @@ h1, h2, h3 { text-wrap: balance; }
 .hero-stage .hero-slide.active { transform: none; visibility: visible; }
 .hero-stage .hero-slide img, .hero-stage .hero-slide img.is-cutout, .hero-stage .hero-slide img.is-photo { position: static; min-height: 0; width: 100%; height: 100%; padding: 20px 28px; object-fit: contain; filter: none; }
 .hero-stage:hover .hero-slide.active img { transform: none; }
-.hero-stage-label { top: 30px; left: 34px; color: var(--ink); font-size: 14px; font-weight: 720; letter-spacing: 0; }
 .hero-stage .hero-slide-copy { position: static; width: 100%; height: 148px; padding: 18px 28px; grid-template-columns: minmax(0, 1fr); gap: 8px; align-content: center; background: var(--ink); color: #fff; }
 .hero-stage .hero-slide-copy span { color: var(--orange); font-size: 12px; font-weight: 720; letter-spacing: 0; }
 .hero-stage .hero-slide-copy strong { font-size: clamp(20px, 2vw, 28px); line-height: 1.05; }
@@ -760,7 +758,6 @@ h1, h2, h3 { text-wrap: balance; }
   .hero-ticket .hero-assurance { display: none; }
   .hero-stage { min-height: 465px; height: 118vw; }
   .hero-stage .hero-slide img, .hero-stage .hero-slide img.is-cutout, .hero-stage .hero-slide img.is-photo { padding: 12px 20px; }
-  .hero-stage-label { top: 22px; left: 24px; font-size: 13px; }
   .hero-stage .hero-slide-copy { min-height: 0; padding: 14px 20px; }
   .hero-stage .hero-slide-copy strong { font-size: 22px; }
   .hero-stage .hero-carousel-controls { right: 0; bottom: 0; width: 100%; }
@@ -770,7 +767,6 @@ h1, h2, h3 { text-wrap: balance; }
   .hero-stage { min-height: 430px; height: calc(100dvh - 44px); }
   .hero-stage .hero-slide { grid-template-rows: minmax(0, 1fr) 118px; padding-top: 42px; }
   .hero-stage .hero-slide-copy { height: 118px; padding-block: 12px; }
-  .hero-stage-label { top: 18px; }
 }
 
   @media (max-width: 820px) {
@@ -779,3 +775,21 @@ h1, h2, h3 { text-wrap: balance; }
     .admin-grid { grid-template-columns: 1fr; }
   }
   @media (max-width: 560px) { .admin-page { padding: 56px 0; }.admin-login { display: grid; align-items: stretch; } }
+
+/* Carrossel: produto sempre inteiro dentro da área da foto, em qualquer tela. */
+.hero-stage .hero-slide { padding-top: 24px; }
+.hero-stage .hero-slide img, .hero-stage .hero-slide img.is-cutout, .hero-stage .hero-slide img.is-photo { align-self: stretch; justify-self: stretch; max-width: 100%; max-height: 100%; overflow: hidden; padding: 24px 40px; }
+@media (max-width: 820px) {
+  .hero-stage .hero-slide img, .hero-stage .hero-slide img.is-cutout, .hero-stage .hero-slide img.is-photo { padding: 28px 18%; }
+}
+@media (max-width: 560px) {
+  .hero-stage { min-height: 440px; height: 112vw; }
+  .hero-stage .hero-slide { padding-top: 16px; grid-template-rows: minmax(0, 1fr) 124px; }
+  .hero-stage .hero-slide-copy { height: 124px; }
+  .hero-stage .hero-slide img, .hero-stage .hero-slide img.is-cutout, .hero-stage .hero-slide img.is-photo { padding: 20px 14%; }
+}
+
+/* Categorias: o ícone do produto fica amarelo ao passar o cursor, focar ou tocar. */
+.category-picture { border-radius: 18px; transition: background-color .25s var(--ease-out); }
+.category-picture img { mix-blend-mode: multiply; padding: 8px; }
+.category-card:hover .category-picture, .category-card:focus-visible .category-picture, .category-card:active .category-picture { background: #ffc61a; }

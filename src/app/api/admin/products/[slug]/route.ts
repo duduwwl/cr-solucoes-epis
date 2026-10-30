@@ -9,9 +9,10 @@ const updatePayload = z.object({
   name: z.string().trim().min(2).max(180),
   brand: z.string().trim().max(120),
   description: z.string().trim().max(1200),
-  features: z.array(z.string().trim().min(1).max(180)).max(12),
+  features: z.array(z.string().trim().min(1).max(180)).max(12).optional(),
   sizeHint: z.string().trim().max(240).nullable().optional(),
-  imagePath: z.string().trim().min(1).max(500),
+  // Only the site's own images: a public path under /images/ or an optimized image key.
+  imagePath: z.string().trim().max(500).regex(/^(\/images\/[a-z0-9/_.-]+\.(webp|png|jpe?g)|[wtr]-[a-z0-9-]+)$/i),
   featured: z.boolean(),
   active: z.boolean(),
 });
@@ -25,7 +26,7 @@ export async function PATCH(request: NextRequest, { params }: { params: Promise<
   try {
     const db = getDb();
     const slug = (await params).slug;
-    const { data: product, error } = await db.from('products').update({ name: parsed.data.name, brand: parsed.data.brand, description: parsed.data.description, features: parsed.data.features, size_hint: parsed.data.sizeHint || null, featured: parsed.data.featured, active: parsed.data.active, updated_at: new Date().toISOString() }).eq('slug', slug).select('id, slug').single();
+    const { data: product, error } = await db.from('products').update({ name: parsed.data.name, brand: parsed.data.brand, description: parsed.data.description, ...(parsed.data.features ? { features: parsed.data.features } : {}), size_hint: parsed.data.sizeHint || null, featured: parsed.data.featured, active: parsed.data.active, updated_at: new Date().toISOString() }).eq('slug', slug).select('id, slug').single();
     if (error || !product) throw error ?? new Error('Produto não encontrado.');
     const { error: deleteImageError } = await db.from('product_images').delete().eq('product_id', product.id);
     if (deleteImageError) throw deleteImageError;

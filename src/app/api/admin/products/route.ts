@@ -13,7 +13,8 @@ const productPayload = z.object({
   description: z.string().trim().max(1200).default(''),
   features: z.array(z.string().trim().min(1).max(180)).max(12).default([]),
   sizeHint: z.string().trim().max(240).nullable().optional(),
-  imagePath: z.string().trim().min(1).max(500),
+  // Only the site's own images: a public path under /images/ or an optimized image key.
+  imagePath: z.string().trim().max(500).regex(/^(\/images\/[a-z0-9/_.-]+\.(webp|png|jpe?g)|[wtr]-[a-z0-9-]+)$/i),
   featured: z.boolean().default(false),
   active: z.boolean().default(true),
 });

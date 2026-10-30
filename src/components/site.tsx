@@ -301,7 +301,6 @@ function HeroCarousel() {
         if (!(event.target instanceof HTMLButtonElement && event.target.classList.contains('hero-rotation-toggle'))) setPaused(true);
       }}
     >
-      <div className="hero-stage-label">SELEÇÃO PROFISSIONAL</div>
       {heroItems.map((item, index) => (
         <a
           href={whatsappLink(productMessage(item.name))}
@@ -359,7 +358,7 @@ function Categories() {
             <div className="eyebrow orange">LINHAS DE PROTEÇÃO</div>
             <h2 id="categorias-titulo">Encontre pela necessidade.</h2>
           </div>
-          <p className="section-intro">Nove linhas e mais de 40 produtos, da bota ao extintor. Escolha uma para ver os modelos e pedir orçamento.</p>
+          <p className="section-intro">{categories.length} linhas e mais de {Math.floor(products.length / 10) * 10} produtos, da bota ao extintor. Escolha uma para ver os modelos e pedir orçamento.</p>
         </InView>
         <AnimatedGroup preset="blur-slide" className="category-grid">
           {categories.map((c) => {
@@ -563,10 +562,8 @@ export function ProductsPage({ category }: { category?: string }) {
     return () => { active = false; };
   }, []);
 
-  const catalog = useMemo(() => {
-    const importedSlugs = new Set(databaseProducts.map((product) => product.slug));
-    return [...products.filter((product) => !importedSlugs.has(product.slug)), ...databaseProducts];
-  }, [databaseProducts]);
+  // The database is the source of truth once it answers; the bundled catalog is the offline fallback.
+  const catalog = databaseProducts.length ? databaseProducts : products;
 
   // read ?categoria= / ?q= once, and keep them in the address
   useEffect(() => {
@@ -1035,7 +1032,7 @@ export function AdminPage() {
   async function save(event: React.FormEvent) {
     event.preventDefault();
     setNotice('');
-    const response = await fetch(editingSlug ? `/api/admin/products/${editingSlug}` : '/api/admin/products', { method: editingSlug ? 'PATCH' : 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ ...form, features: [] }) });
+    const response = await fetch(editingSlug ? `/api/admin/products/${editingSlug}` : '/api/admin/products', { method: editingSlug ? 'PATCH' : 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(editingSlug ? form : { ...form, features: [] }) });
     if (!response.ok) { setNotice('Não foi possível salvar. Confira categoria, slug e imagem.'); return; }
     setForm({ slug: '', categorySlug: categories[0].slug, name: '', brand: 'Linha CR', description: '', imagePath: '', featured: false, active: true });
     setEditingSlug(null); await loadProducts(); setNotice(editingSlug ? 'Produto atualizado.' : 'Produto criado.');
