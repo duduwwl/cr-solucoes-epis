@@ -5,6 +5,7 @@ export type CategorySlug =
   | 'vestimentas'
   | 'uniformes'
   | 'auditiva'
+  | 'ocular'
   | 'altura'
   | 'limpeza'
   | 'incendio';
@@ -54,6 +55,12 @@ export const categories: Category[] = [
     name: 'Proteção auditiva',
     summary: 'Protetor tipo plug de silicone com cordão e abafadores tipo concha, inclusive para acoplar ao capacete.',
     image: 't-protetor-auditivo-plug',
+  },
+  {
+    slug: 'ocular',
+    name: 'Proteção ocular',
+    summary: 'Óculos de segurança para proteção dos olhos em atividades profissionais.',
+    image: '/images/catalog/oculos-steelflex-preto-v1.png',
   },
   {
     slug: 'altura',
@@ -496,6 +503,17 @@ export const products: Product[] = [
     images: ['w-protetor-concha-capacete'],
     description: 'Protetor tipo concha para acoplar no capacete, para construção civil, indústria e mineração.',
     features: ['Acoplamento ao capacete', 'Alta atenuação', 'Conchas confortáveis para uso prolongado'],
+  },
+
+  /* ───────── Proteção ocular ───────── */
+  {
+    slug: 'oculos-steelflex-preto',
+    name: 'Óculos de segurança SteelFlex preto',
+    category: 'ocular',
+    brand: 'SteelFlex',
+    images: ['/images/catalog/oculos-steelflex-preto-v1.png'],
+    description: 'Óculos de segurança com lentes escuras e hastes laterais reforçadas.',
+    features: ['Lentes escuras', 'Hastes reforçadas'],
   },
 
   /* ───────── Trabalho em altura ───────── */

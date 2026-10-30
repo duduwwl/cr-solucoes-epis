@@ -1,7 +1,7 @@
 import { notFound } from 'next/navigation';
 import { DetailPage } from '@/components/site';
 import { categoryBySlug, productBySlug, products } from '@/data/catalog';
-import { SITE, img, pageMeta } from '@/lib/site';
+import { SITE, assetPath, img, pageMeta } from '@/lib/site';
 
 export const dynamicParams = false;
 export function generateStaticParams() {
@@ -9,12 +9,13 @@ export function generateStaticParams() {
 }
 
 const rel = (src: string) => src.replace(/^\/cr-solucoes-epis\//, '').replace(/^\//, '');
+const productImage = (src: string) => (src.startsWith('/') ? assetPath(src) : img(src).src);
 
 export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }) {
   const p = productBySlug((await params).slug);
   if (!p) return {};
   return pageMeta(`/produtos/${p.slug}/`, p.name, `${p.description} ${p.features.join(', ')}. Orçamento pelo WhatsApp com a CR Soluções em EPIs, em Lavras/MG.`, {
-    url: rel(img(p.images[0]).src),
+    url: rel(productImage(p.images[0])),
     alt: p.name,
   });
 }
@@ -29,7 +30,7 @@ export default async function Page({ params }: { params: Promise<{ slug: string 
       '@type': 'Product',
       name: p.name,
       description: p.description,
-      image: `${SITE.url}/${rel(img(p.images[0]).src)}`,
+      image: `${SITE.url}/${rel(productImage(p.images[0]))}`,
       category: cat?.name,
       brand: { '@type': 'Brand', name: p.brand },
       url: `${SITE.url}/produtos/${p.slug}/`,

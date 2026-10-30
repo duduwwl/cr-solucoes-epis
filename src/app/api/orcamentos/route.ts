@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { z } from 'zod';
-import { sql } from '@/lib/db';
+import { getDb } from '@/lib/db';
 import { getClientFingerprint, isTrustedOrigin } from '@/lib/security';
 
 export const runtime = 'nodejs';
@@ -21,25 +21,52 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: 'Requisição inválida.' }, { status: 400 });
     }
 
-    const raw = await request.json();
-    const parsed = payloadSchema.safeParse(raw);
+    const parsed = payloadSchema.safeParse(await request.json());
     if (!parsed.success || parsed.data.website) {
       return NextResponse.json({ error: 'Não foi possível registrar a solicitação.' }, { status: 400 });
     }
 
     const fingerprint = getClientFingerprint(request);
-    const recent = await sql`SELECT count(*)::int AS count FROM request_rate_limits WHERE fingerprint = ${fingerprint} AND created_at > now() - interval '15 minutes'`;
-    if (recent[0]?.count >= 6) {
+    const since = new Date(Date.now() - 15 * 60 * 1000).toISOString();
+    const db = getDb();
+    const { count, error: rateError } = await db
+      .from('request_rate_limits')
+      .select('id', { count: 'exact', head: true })
+      .eq('fingerprint', fingerprint)
+      .gt('created_at', since);
+    if (rateError) throw rateError;
+    if ((count ?? 0) >= 6) {
       return NextResponse.json({ error: 'Aguarde alguns minutos antes de enviar outra solicitação.' }, { status: 429 });
     }
 
-    await sql`INSERT INTO request_rate_limits (fingerprint) VALUES (${fingerprint})`;
-    const [quote] = await sql`
-      INSERT INTO quote_requests (contact_name, phone, email, company, message, product_slug, source, user_agent, ip_hash)
-      VALUES (${parsed.data.name}, ${parsed.data.phone || null}, ${parsed.data.email || null}, ${parsed.data.company || null}, ${parsed.data.message}, ${parsed.data.productSlug || null}, 'website', ${request.headers.get('user-agent')?.slice(0, 500) || null}, ${fingerprint})
-      RETURNING id
-    `;
-    await sql`INSERT INTO audit_log (action, entity_type, entity_id, metadata) VALUES ('quote.created', 'quote_request', ${quote.id}, ${JSON.stringify({ productSlug: parsed.data.productSlug || null })}::jsonb)`;
+    const { error: rateInsertError } = await db.from('request_rate_limits').insert({ fingerprint });
+    if (rateInsertError) throw rateInsertError;
+
+    const { data: quote, error: quoteError } = await db
+      .from('quote_requests')
+      .insert({
+        contact_name: parsed.data.name,
+        phone: parsed.data.phone || null,
+        email: parsed.data.email || null,
+        company: parsed.data.company || null,
+        message: parsed.data.message,
+        product_slug: parsed.data.productSlug || null,
+        source: 'website',
+        user_agent: request.headers.get('user-agent')?.slice(0, 500) || null,
+        ip_hash: fingerprint,
+      })
+      .select('id')
+      .single();
+    if (quoteError || !quote) throw quoteError ?? new Error('Orçamento não criado.');
+
+    const { error: auditError } = await db.from('audit_log').insert({
+      action: 'quote.created',
+      entity_type: 'quote_request',
+      entity_id: quote.id,
+      metadata: { productSlug: parsed.data.productSlug || null },
+    });
+    if (auditError) throw auditError;
+
     return NextResponse.json({ ok: true, id: quote.id }, { status: 201 });
   } catch (error) {
     console.error('quote_request_failed', error);

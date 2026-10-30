@@ -1,10 +1,15 @@
 import 'server-only';
-import { neon } from '@neondatabase/serverless';
+import { createClient, type SupabaseClient } from '@supabase/supabase-js';
 
-const connectionString = process.env.DATABASE_URL || process.env.POSTGRES_URL;
+const url = process.env.SUPABASE_URL;
+const secretKey = process.env.SUPABASE_SECRET_KEY;
 
-if (!connectionString) {
-  throw new Error('Banco de dados não configurado. Defina DATABASE_URL no ambiente da Vercel.');
+let client: SupabaseClient | undefined;
+
+export function getDb() {
+  if (!url || !secretKey) {
+    throw new Error('Banco de dados não configurado. Defina SUPABASE_URL e SUPABASE_SECRET_KEY na Vercel.');
+  }
+  client ??= createClient(url, secretKey, { auth: { autoRefreshToken: false, persistSession: false } });
+  return client;
 }
-
-export const sql = neon(connectionString);

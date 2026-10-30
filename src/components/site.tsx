@@ -3,8 +3,8 @@
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { useEffect, useMemo, useRef, useState, type ReactNode } from 'react';
-import { AnimatePresence, motion, useReducedMotion } from 'motion/react';
-import { ClipboardList, Search, X } from 'lucide-react';
+import { AnimatePresence, motion } from 'motion/react';
+import { Search, X } from 'lucide-react';
 import { InView } from '@/components/ui/in-view';
 import { AnimatedGroup } from '@/components/ui/animated-group';
 import { TextEffect } from '@/components/ui/text-effect';
@@ -14,11 +14,8 @@ import { TransitionPanel } from '@/components/ui/transition-panel';
 import VerticalCutReveal from '@/components/fancy/vertical-cut-reveal';
 import { LetterSwapLink } from '@/components/fancy/letter-swap-link';
 import Faq from '@/components/faq';
-import { AddToQuote } from '@/components/quote/add-to-quote';
-import { QtyStepper } from '@/components/quote/qty-stepper';
 import { categories, categoryBySlug, productBySlug, products, relatedProducts, type Product } from '@/data/catalog';
-import { quote, useQuote } from '@/lib/quote-store';
-import { SITE, businessMessage, generalMessage, img, logo, productMessage, whatsappLink } from '@/lib/site';
+import { SITE, assetPath, businessMessage, generalMessage, img, logo, productMessage, whatsappLink } from '@/lib/site';
 
 /* ───────────── Base ───────────── */
 
@@ -44,17 +41,11 @@ function isActive(pathname: string, href: string) {
   return clean === target;
 }
 
-function useListCount() {
-  const { items } = useQuote();
-  return items.reduce((n, i) => n + i.qty, 0);
-}
-
 export function Header() {
   const pathname = usePathname() || '/';
   const [open, setOpen] = useState(false);
   const [hidden, setHidden] = useState(false);
   const last = useRef(0);
-  const count = useListCount();
 
   useEffect(() => setOpen(false), [pathname]);
 
@@ -93,13 +84,6 @@ export function Header() {
           <a className="nav-phone" href={SITE.phoneHref}>
             {SITE.phoneDisplay}
           </a>
-          <button type="button" className="nav-list" onClick={() => quote.open()} aria-label={`Lista de orçamento, ${count} ${count === 1 ? 'item' : 'itens'}`}>
-            <ClipboardList size={17} strokeWidth={1.8} aria-hidden />
-            <span className="nav-list-label">Lista</span>
-            <span className="nav-list-count" aria-hidden>
-              <SlidingNumber value={count} />
-            </span>
-          </button>
           <button
             type="button"
             className={`mobile-menu ${open ? 'is-open' : ''}`}
@@ -193,7 +177,6 @@ export function Footer() {
 
 export function MobileBar() {
   const pathname = usePathname() || '/';
-  const count = useListCount();
   return (
     <nav className="mobile-bar" aria-label="Atalhos">
       <Link href="/" aria-current={pathname === '/' ? 'page' : undefined}>
@@ -205,9 +188,7 @@ export function MobileBar() {
       <Link href="/empresas/" aria-current={isActive(pathname, '/empresas/') ? 'page' : undefined}>
         Empresas
       </Link>
-      <button type="button" onClick={() => quote.open()}>
-        Lista{count ? ` (${count})` : ''}
-      </button>
+      <a href={whatsappLink(generalMessage)} target="_blank" rel="noreferrer">WhatsApp</a>
     </nav>
   );
 }
@@ -229,6 +210,9 @@ export function PageShell({ children }: { children: ReactNode }) {
 /* ───────────── Produtos ───────────── */
 
 export function ProductImage({ name, alt, sizes, eager, className = '' }: { name: string; alt: string; sizes: string; eager?: boolean; className?: string }) {
+  if (name.startsWith('/')) {
+    return <img className={`is-photo ${className}`} src={assetPath(name)} sizes={sizes} alt={alt} loading={eager ? 'eager' : 'lazy'} decoding="async" />;
+  }
   const pic = img(name);
   return (
     <img
@@ -247,22 +231,21 @@ export function ProductImage({ name, alt, sizes, eager, className = '' }: { name
 
 export function CatalogCard({ p }: { p: Product }) {
   const cat = categoryBySlug(p.category);
+  const productWhatsApp = whatsappLink(productMessage(p.name));
   return (
     <article className="product-card">
-      <Link href={`/produtos/${p.slug}/`} className="product-image" aria-label={`${p.name}, ver detalhes`}>
+      <a href={productWhatsApp} target="_blank" rel="noreferrer" className="product-image" aria-label={`${p.name}, solicitar no WhatsApp`}>
         <span className="product-tag">{cat?.name}</span>
         <ProductImage name={p.images[0]} alt={p.name} sizes="(min-width: 1060px) 24vw, (min-width: 560px) 45vw, 92vw" />
-      </Link>
+      </a>
       <div className="product-info">
         <div className="product-meta">{p.brand}</div>
         <h3>
-          <Link href={`/produtos/${p.slug}/`}>{p.name}</Link>
+          <a href={productWhatsApp} target="_blank" rel="noreferrer">{p.name}</a>
         </h3>
         <p className="product-description">{p.description}</p>
-        {p.priceFrom && <p className="product-price">A partir de {p.priceFrom}</p>}
         <div className="product-bottom">
-          <AddToQuote slug={p.slug} name={p.name} />
-          <a href={whatsappLink(productMessage(p.name))} target="_blank" rel="noreferrer" className="product-wa">
+          <a href={productWhatsApp} target="_blank" rel="noreferrer" className="product-wa">
             Orçar no WhatsApp
           </a>
         </div>
@@ -289,16 +272,6 @@ const heroItems = ['bota-gogowear-caramelo', 'capacete-de-protecao', 'luva-multi
 
 function HeroCarousel() {
   const [active, setActive] = useState(0);
-  const [paused, setPaused] = useState(false);
-  const reduce = useReducedMotion();
-
-  useEffect(() => {
-    if (paused || reduce) return;
-    const id = window.setInterval(() => {
-      if (!document.hidden) setActive((i) => (i + 1) % heroItems.length);
-    }, 4200);
-    return () => window.clearInterval(id);
-  }, [paused, reduce]);
 
   return (
     <div
@@ -306,10 +279,6 @@ function HeroCarousel() {
       role="region"
       aria-roledescription="carrossel"
       aria-label="Seleção de produtos CR"
-      onMouseEnter={() => setPaused(true)}
-      onMouseLeave={() => setPaused(false)}
-      onFocus={() => setPaused(true)}
-      onBlur={() => setPaused(false)}
     >
       <div className="hero-stage-label">SELEÇÃO PROFISSIONAL</div>
       {heroItems.map((item, index) => (
@@ -702,8 +671,6 @@ export function CategoryPage({ slug }: { slug: string }) {
 export function DetailPage({ slug }: { slug: string }) {
   const p = productBySlug(slug);
   const [shot, setShot] = useState(0);
-  const [qty, setQty] = useState(1);
-  const [size, setSize] = useState('');
   if (!p)
     return (
       <PageShell>
@@ -716,12 +683,7 @@ export function DetailPage({ slug }: { slug: string }) {
       </PageShell>
     );
   const cat = categoryBySlug(p.category);
-  const sizeLabel = p.sizeHint ?? 'Tamanho ou observação';
-  const message = [
-    `Olá! Gostaria de solicitar um orçamento para ${p.name}.`,
-    `Quantidade: ${qty}${size.trim() ? ` · ${p.sizeHint ?? 'Tamanho'}: ${size.trim()}` : ''}.`,
-    'Poderiam informar disponibilidade, tamanhos e valores?',
-  ].join('\n');
+  const message = productMessage(p.name);
 
   return (
     <PageShell>
@@ -766,38 +728,16 @@ export function DetailPage({ slug }: { slug: string }) {
             <h1>{p.name}</h1>
             <div className="product-meta">{p.brand}</div>
             <p>{p.description}</p>
-            {p.priceFrom && (
-              <p className="detail-price">
-                A partir de {p.priceFrom} <small>valor divulgado pela loja; confirme no orçamento</small>
-              </p>
-            )}
             <ul className="feature-list">
               {p.features.map((feature) => (
                 <li key={feature}>{feature}</li>
               ))}
             </ul>
             <div className="notice">Confirme com a equipe o número do CA, materiais, medidas, disponibilidade e condições comerciais antes de fechar o pedido.</div>
-            <div className="order-box">
-              <div className="order-field">
-                <span>Quantidade</span>
-                <QtyStepper value={qty} onChange={setQty} label={`Quantidade de ${p.name}`} />
-              </div>
-              <label className="order-field">
-                <span>{sizeLabel} (opcional)</span>
-                <input
-                  className="search-input"
-                  value={size}
-                  onChange={(e) => setSize(e.target.value)}
-                  maxLength={40}
-                  placeholder={p.sizeHint === 'Numeração' ? 'Ex.: 40 e 42' : p.sizeHint ? 'Ex.: M, G e GG' : 'Ex.: cor, uso, prazo'}
-                />
-              </label>
-            </div>
             <div className="detail-actions">
               <a className="pill hot" href={whatsappLink(message)} target="_blank" rel="noreferrer">
                 Solicitar orçamento no WhatsApp
               </a>
-              <AddToQuote slug={p.slug} name={p.name} qty={qty} size={size} large />
             </div>
             <p>
               <Link href="/produtos/" className="textlink">
@@ -958,9 +898,7 @@ export function ContentPage({ type }: { type: 'about' | 'business' | 'privacy' |
           <a className="pill hot" href={whatsappLink(businessMessage)} target="_blank" rel="noreferrer">
             Solicitar orçamento empresarial
           </a>
-          <button type="button" className="pill" onClick={() => quote.open()}>
-            Abrir lista de orçamento
-          </button>
+          <a className="pill" href={whatsappLink(businessMessage)} target="_blank" rel="noreferrer">Falar com a equipe</a>
         </div>
       </>
     );
@@ -970,7 +908,7 @@ export function ContentPage({ type }: { type: 'about' | 'business' | 'privacy' |
     text = (
       <>
         <p>Este site é um catálogo. Ele não tem cadastro, não recebe pagamentos e não envia dados pessoais para servidores da CR Soluções em EPIs.</p>
-        <p>Os itens adicionados à lista de orçamento ficam guardados apenas no seu navegador. Para apagá-los, use “Limpar lista”.</p>
+        <p>O catálogo não usa carrinho ou checkout. Os pedidos são tratados diretamente pela equipe no WhatsApp.</p>
         <p>Os botões de orçamento abrem o WhatsApp com uma mensagem já escrita. Nada é enviado até que você mesmo envie a mensagem.</p>
       </>
     );
@@ -1003,7 +941,7 @@ export function AdminPage() {
       <main className="wrap page-hero">
         <div className="eyebrow orange">Área administrativa</div>
         <h1>Gestão protegida pela Vercel.</h1>
-        <p className="section-intro">Solicitações comerciais são registradas no banco Neon. O acesso de gestão deve ser feito somente por credenciais administrativas configuradas no ambiente; nenhum dado sensível é exposto nesta página pública.</p>
+        <p className="section-intro">Solicitações comerciais são registradas no Supabase. O acesso de gestão deve usar credenciais administrativas configuradas no ambiente; nenhum dado sensível é exposto nesta página pública.</p>
       </main>
     </PageShell>
   );
