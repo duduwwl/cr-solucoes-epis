@@ -26,7 +26,7 @@ export async function GET() {
       { headers: { 'Cache-Control': 'public, s-maxage=300, stale-while-revalidate=600' } },
     );
   } catch (error) {
-    console.error('products_read_failed', error);
+    if (process.env.SUPABASE_URL) console.error('products_read_failed', error);
     return NextResponse.json({ error: 'Catálogo indisponível no momento.' }, { status: 503 });
   }
 }
