@@ -27,7 +27,8 @@ export async function GET(request: NextRequest) {
     if (error) throw error;
     return NextResponse.json({ products: (data ?? []).map((product) => ({ ...product, category: Array.isArray(product.category) ? product.category[0] ?? null : product.category, images: [...(product.images ?? [])].sort((a, b) => a.sort_order - b.sort_order) })) });
   } catch (error) {
-    return NextResponse.json({ error: 'Banco indisponível.', diagnostic: databaseDiagnostic(error) }, { status: 503 });
+    const code = (error as { code?: unknown }).code;
+    return NextResponse.json({ error: 'Banco indisponível.', diagnostic: databaseDiagnostic(error), code: typeof code === 'string' ? code : null }, { status: 503 });
   }
 }
 
