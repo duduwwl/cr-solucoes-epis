@@ -97,7 +97,6 @@ export type Product = {
   /** What the buyer should tell the store when asking for a quote. */
   sizeHint?: string;
   /** A price the store itself published, shown as a starting point only. */
-  priceFrom?: string;
 };
 
 const gogowearText = 'Linha Gogowear: alta durabilidade, conforto e segurança.';
@@ -195,7 +194,6 @@ export const products: Product[] = [
     description: 'Botina robusta, com excelente acabamento, para o trabalho e o dia a dia. Disponível nas cores preta e marrom.',
     features: ['Cores preta e marrom', 'Gola acolchoada', 'Solado de borracha'],
     sizeHint: 'Numeração',
-    priceFrom: 'R$ 150,00',
   },
   {
     slug: 'botina-elastica',
