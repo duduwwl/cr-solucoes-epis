@@ -4,7 +4,7 @@ import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { useEffect, useMemo, useRef, useState, type ReactNode } from 'react';
 import { AnimatePresence, motion } from 'motion/react';
-import { Pause, Play, Search, Settings, X } from 'lucide-react';
+import { Search, Settings, X } from 'lucide-react';
 import { InView } from '@/components/ui/in-view';
 import { AnimatedGroup } from '@/components/ui/animated-group';
 import { SlidingNumber } from '@/components/ui/sliding-number';
@@ -274,7 +274,6 @@ const heroItems = ['bota-gogowear-caramelo', 'capacete-de-protecao', 'luva-latex
 
 function HeroCarousel() {
   const [active, setActive] = useState(0);
-  const [paused, setPaused] = useState(false);
   const [reducedMotion, setReducedMotion] = useState(false);
 
   useEffect(() => {
@@ -286,10 +285,10 @@ function HeroCarousel() {
   }, []);
 
   useEffect(() => {
-    if (paused || reducedMotion) return;
-    const timer = window.setInterval(() => setActive((current) => (current + 1) % heroItems.length), 5200);
+    if (reducedMotion) return;
+    const timer = window.setInterval(() => setActive((current) => (current + 1) % heroItems.length), 2000);
     return () => window.clearInterval(timer);
-  }, [paused, reducedMotion]);
+  }, [reducedMotion]);
 
   return (
     <div
@@ -297,9 +296,6 @@ function HeroCarousel() {
       role="region"
       aria-roledescription="carrossel"
       aria-label="Seleção de produtos CR"
-      onFocusCapture={(event) => {
-        if (!(event.target instanceof HTMLButtonElement && event.target.classList.contains('hero-rotation-toggle'))) setPaused(true);
-      }}
     >
       {heroItems.map((item, index) => (
         <a
@@ -332,15 +328,6 @@ function HeroCarousel() {
             />
           ))}
         </div>
-        <button
-          className="hero-rotation-toggle"
-          type="button"
-          aria-label={paused || reducedMotion ? 'Retomar carrossel' : 'Pausar carrossel'}
-          aria-pressed={paused || reducedMotion}
-          onClick={() => setPaused((current) => !current)}
-        >
-          {paused || reducedMotion ? <Play size={16} aria-hidden="true" /> : <Pause size={16} aria-hidden="true" />}
-        </button>
       </div>
     </div>
   );

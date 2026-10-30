@@ -27,15 +27,12 @@ try {
  const autoPage=await browser.newPage({width:390,height:844,mobile:true,reducedMotion:false});
  await autoPage.goto('http://localhost:4010/');
  const activeBefore=await autoPage.eval(()=>document.querySelector('.hero-progress button.active')?.getAttribute('aria-label'));
- await new Promise(r=>setTimeout(r,5400));
+ await new Promise(r=>setTimeout(r,2300));
  const activeAfter=await autoPage.eval(()=>document.querySelector('.hero-progress button.active')?.getAttribute('aria-label'));
  assert.notEqual(activeAfter,activeBefore,'mobile carousel must advance automatically');
- await autoPage.eval(()=>document.querySelector('.hero-rotation-toggle').click());
- const pausedAt=await autoPage.eval(()=>document.querySelector('.hero-progress button.active')?.getAttribute('aria-label'));
- await new Promise(r=>setTimeout(r,5400));
- assert.equal(await autoPage.eval(()=>document.querySelector('.hero-progress button.active')?.getAttribute('aria-label')),pausedAt,'mobile carousel must pause on command');
+ assert.equal(await autoPage.eval(()=>document.querySelector('.hero-rotation-toggle'),null),null,'carousel must not render pause control');
  await autoPage.close();
  writeFileSync(`${out}/results.json`,JSON.stringify(results,null,2));
  assert(results.every(r=>!r.overflow&&!r.broken.length),JSON.stringify(results.filter(r=>r.overflow||r.broken.length)));
- console.log('PASS: 25 page/viewport combinations, 35 slide selections, carousel auto-rotation, no image failures or horizontal overflow.');
+ console.log('PASS: 25 page/viewport combinations, 35 slide selections, 2-second carousel auto-rotation, no image failures or horizontal overflow.');
 }finally{await browser.close()}

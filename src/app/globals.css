@@ -776,10 +776,8 @@ h1, h2, h3 { text-wrap: balance; }
   }
   @media (max-width: 560px) { .admin-page { padding: 56px 0; }.admin-login { display: grid; align-items: stretch; } }
 
-/* Carrossel: produto inteiro sobre o mesmo fundo escuro da abertura, em qualquer tela.
-   A foto fica em posição absoluta com altura calculada: percentuais dentro da linha do grid
-   não resolvem no Safari/iOS e a imagem estourava a área, aparecendo cortada. */
-.hero-stage { --copy-h: 148px; --controls-h: 44px; --photo-top: 28px; background: var(--ink); }
+/* Carrossel: mantém o recorte inteiro em qualquer viewport, inclusive Safari/iOS. */
+.hero-stage { --copy-h: 148px; --controls-h: 44px; --photo-top: 28px; overflow: hidden; isolation: isolate; background: var(--ink); }
 .hero-stage .hero-slide { background: var(--ink); padding: 0; }
 .hero-stage .hero-slide-copy { grid-row: 2; height: var(--copy-h); align-self: end; margin-bottom: var(--controls-h); }
 .hero-stage .hero-slide { grid-template-rows: 1fr calc(var(--copy-h) + var(--controls-h)); }
@@ -793,8 +791,8 @@ h1, h2, h3 { text-wrap: balance; }
   .hero-stage .hero-slide img, .hero-stage .hero-slide img.is-cutout, .hero-stage .hero-slide img.is-photo { padding: 0 12%; }
 }
 @media (max-width: 560px) {
-  .hero-stage { --copy-h: 124px; --photo-top: 22px; min-height: 440px; height: 112vw; }
-  .hero-stage .hero-slide img, .hero-stage .hero-slide img.is-cutout, .hero-stage .hero-slide img.is-photo { padding: 0 9%; }
+  .hero-stage { --copy-h: 124px; --photo-top: 22px; min-height: 500px; height: 132vw; }
+  .hero-stage .hero-slide img, .hero-stage .hero-slide img.is-cutout, .hero-stage .hero-slide img.is-photo { padding: 0 8%; }
 }
 @media (max-width: 820px) and (orientation: landscape) and (max-height: 560px) {
   .hero-stage { --copy-h: 118px; --photo-top: 16px; }
@@ -810,3 +808,9 @@ h1, h2, h3 { text-wrap: balance; }
 .category-picture { border-radius: 18px; transition: background-color .25s var(--ease-out); }
 .category-picture img { mix-blend-mode: multiply; padding: 8px; }
 .category-card:hover .category-picture, .category-card:focus-visible .category-picture, .category-card:active .category-picture { background: #ffc61a; }
+
+/* A imagem do carrossel não recebe a caixa branca do catálogo. */
+.hero-stage .hero-slide img { background: transparent; mix-blend-mode: normal; }
+@media (max-width: 390px) {
+  .hero-stage { min-height: 480px; height: 136vw; }
+}
