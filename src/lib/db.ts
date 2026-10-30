@@ -18,6 +18,7 @@ export function getDb() {
 export function databaseDiagnostic(error: unknown) {
   const value = error as { code?: string; message?: string };
   const message = value?.message?.toLowerCase() ?? '';
+  if (message.includes('não configurado')) return 'configuration_missing';
   if (value?.code === 'PGRST205' || value?.code === '42P01') return 'schema_missing';
   if (value?.code === '401' || value?.code === '403') return 'credentials_rejected';
   if (message.includes('api key') || message.includes('jwt')) return 'credentials_rejected';
