@@ -503,8 +503,8 @@ h1, h2, h3 { text-wrap: balance; }
 /* cartões de produto */
 .product-card { transition: transform .22s var(--ease-out), border-color .22s; }
 .product-card:hover { transform: translateY(-4px); }
-.product-image { display: grid; }
-.product-image img { transition: transform .6s var(--ease-out); }
+.product-image { display: grid; isolation: isolate; }
+.product-image img { z-index: 1; transition: transform .6s var(--ease-out); }
 .product-image img.is-photo { padding: 0; object-fit: cover; }
 .product-image img.is-cutout { padding: 30px; object-fit: contain; }
 @media (hover: hover) and (pointer: fine) { .product-card:hover .product-image img { transform: scale(1.04); } }
