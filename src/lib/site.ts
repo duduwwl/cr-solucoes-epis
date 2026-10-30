@@ -3,7 +3,7 @@ import images from '@/data/images.json';
 export const SITE = {
   name: 'CR Soluções em EPIs',
   shortName: 'CR Soluções',
-  url: 'https://duduwwl.github.io/cr-solucoes-epis',
+  url: 'https://xn--crsoluesemepi-ngb4s.com.br',
   phoneDisplay: '(35) 4104-6700',
   phoneHref: 'tel:+553541046700',
   whatsappNumber: '553541046700',
