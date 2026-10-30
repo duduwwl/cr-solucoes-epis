@@ -26,6 +26,13 @@ const meta = images as Record<string, ImageMeta>;
 
 export type ImageName = keyof typeof images;
 
+/** Prefers the source cutout for catalog views when one is available. */
+export function catalogImage(name: string) {
+  if (!name.startsWith('w-')) return name;
+  const cutout = name.replace(/^w-/, 't-');
+  return meta[cutout] ? cutout : name;
+}
+
 /** Width, height, src and srcSet for an optimized image in /images/opt. */
 export function img(name: string) {
   const m = meta[name];

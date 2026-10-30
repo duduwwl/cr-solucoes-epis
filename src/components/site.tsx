@@ -15,7 +15,7 @@ import VerticalCutReveal from '@/components/fancy/vertical-cut-reveal';
 import { LetterSwapLink } from '@/components/fancy/letter-swap-link';
 import Faq from '@/components/faq';
 import { categories, categoryBySlug, productBySlug, products, relatedProducts, type Product } from '@/data/catalog';
-import { SITE, assetPath, businessMessage, generalMessage, img, logo, productMessage, whatsappLink } from '@/lib/site';
+import { SITE, assetPath, businessMessage, catalogImage, generalMessage, img, logo, productMessage, whatsappLink } from '@/lib/site';
 
 /* ───────────── Base ───────────── */
 
@@ -236,7 +236,7 @@ export function CatalogCard({ p }: { p: Product }) {
     <article className="product-card">
       <a href={productWhatsApp} target="_blank" rel="noreferrer" className="product-image" aria-label={`${p.name}, solicitar no WhatsApp`}>
         <span className="product-tag">{cat?.name}</span>
-        <ProductImage name={p.images[0]} alt={p.name} sizes="(min-width: 1060px) 24vw, (min-width: 560px) 45vw, 92vw" />
+        <ProductImage name={catalogImage(p.images[0])} alt={p.name} sizes="(min-width: 1060px) 24vw, (min-width: 560px) 45vw, 92vw" />
       </a>
       <div className="product-info">
         <div className="product-meta">{p.brand}</div>
@@ -291,7 +291,7 @@ function HeroCarousel() {
           aria-hidden={index !== active}
           tabIndex={index === active ? 0 : -1}
         >
-          <ProductImage name={item.images[0].replace(/^w-/, 't-')} alt={item.name} sizes="(min-width: 820px) 50vw, 92vw" eager={index === 0} />
+          <ProductImage name={catalogImage(item.images[0])} alt={item.name} sizes="(min-width: 820px) 50vw, 92vw" eager={index === 0} />
           <div className="hero-slide-copy">
             <span>{categoryBySlug(item.category)?.name}</span>
             <strong>{item.name}</strong>
@@ -712,14 +712,14 @@ export function DetailPage({ slug }: { slug: string }) {
               }}
             >
               {p.images.map((name, i) => (
-                <ProductImage key={name} name={name} alt={i === 0 ? p.name : `${p.name}: imagem de referência da linha`} sizes="(min-width: 820px) 55vw, 100vw" eager={i === 0} />
+                <ProductImage key={name} name={catalogImage(name)} alt={i === 0 ? p.name : `${p.name}: imagem de referência da linha`} sizes="(min-width: 820px) 55vw, 100vw" eager={i === 0} />
               ))}
             </TransitionPanel>
             {p.images.length > 1 && (
               <div className="detail-thumbs" role="group" aria-label="Escolher imagem">
                 {p.images.map((name, i) => (
                   <button key={name} type="button" className={i === shot ? 'active' : ''} aria-pressed={i === shot} aria-label={`Ver imagem ${i + 1} de ${p.images.length}`} onClick={() => setShot(i)}>
-                    <ProductImage name={name} alt="" sizes="88px" />
+                    <ProductImage name={catalogImage(name)} alt="" sizes="88px" />
                   </button>
                 ))}
               </div>
