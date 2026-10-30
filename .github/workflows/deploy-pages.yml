@@ -34,6 +34,7 @@ jobs:
         run: pnpm install --frozen-lockfile
       - name: Gerar site estático
         env:
+          GITHUB_PAGES: 'true'
           NEXT_PUBLIC_BASE_PATH: /cr-solucoes-epis
         run: pnpm build
       - name: Enviar artefato
