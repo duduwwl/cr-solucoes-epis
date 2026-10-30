@@ -4,7 +4,7 @@ import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { useEffect, useMemo, useRef, useState, type ReactNode } from 'react';
 import { AnimatePresence, motion } from 'motion/react';
-import { Search, X } from 'lucide-react';
+import { Pause, Play, Search, Settings, X } from 'lucide-react';
 import { InView } from '@/components/ui/in-view';
 import { AnimatedGroup } from '@/components/ui/animated-group';
 import { SlidingNumber } from '@/components/ui/sliding-number';
@@ -133,6 +133,10 @@ export function Footer() {
           <div className="footer-identity">
             <Brand />
             <p>Equipamentos de proteção para profissionais, equipes e empresas. Atendimento em Lavras e envio para todo o Brasil.</p>
+            <Link className="footer-admin-link" href="/admin/">
+              <Settings size={16} aria-hidden="true" />
+              Área da gerência
+            </Link>
           </div>
           <div className="footer-column">
             <h4>Catálogo</h4>
@@ -270,6 +274,22 @@ const heroItems = ['bota-gogowear-caramelo', 'capacete-de-protecao', 'luva-multi
 
 function HeroCarousel() {
   const [active, setActive] = useState(0);
+  const [paused, setPaused] = useState(false);
+  const [reducedMotion, setReducedMotion] = useState(false);
+
+  useEffect(() => {
+    const media = window.matchMedia('(prefers-reduced-motion: reduce)');
+    const update = () => setReducedMotion(media.matches);
+    update();
+    media.addEventListener('change', update);
+    return () => media.removeEventListener('change', update);
+  }, []);
+
+  useEffect(() => {
+    if (paused || reducedMotion) return;
+    const timer = window.setInterval(() => setActive((current) => (current + 1) % heroItems.length), 5200);
+    return () => window.clearInterval(timer);
+  }, [paused, reducedMotion]);
 
   return (
     <div
@@ -277,6 +297,9 @@ function HeroCarousel() {
       role="region"
       aria-roledescription="carrossel"
       aria-label="Seleção de produtos CR"
+      onFocusCapture={(event) => {
+        if (!(event.target instanceof HTMLButtonElement && event.target.classList.contains('hero-rotation-toggle'))) setPaused(true);
+      }}
     >
       <div className="hero-stage-label">SELEÇÃO PROFISSIONAL</div>
       {heroItems.map((item, index) => (
@@ -310,6 +333,15 @@ function HeroCarousel() {
             />
           ))}
         </div>
+        <button
+          className="hero-rotation-toggle"
+          type="button"
+          aria-label={paused || reducedMotion ? 'Retomar carrossel' : 'Pausar carrossel'}
+          aria-pressed={paused || reducedMotion}
+          onClick={() => setPaused((current) => !current)}
+        >
+          {paused || reducedMotion ? <Play size={16} aria-hidden="true" /> : <Pause size={16} aria-hidden="true" />}
+        </button>
       </div>
     </div>
   );
