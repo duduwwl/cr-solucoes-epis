@@ -776,18 +776,35 @@ h1, h2, h3 { text-wrap: balance; }
   }
   @media (max-width: 560px) { .admin-page { padding: 56px 0; }.admin-login { display: grid; align-items: stretch; } }
 
-/* Carrossel: produto sempre inteiro dentro da área da foto, em qualquer tela. */
-.hero-stage .hero-slide { padding-top: 24px; }
-.hero-stage .hero-slide img, .hero-stage .hero-slide img.is-cutout, .hero-stage .hero-slide img.is-photo { align-self: stretch; justify-self: stretch; max-width: 100%; max-height: 100%; overflow: hidden; padding: 24px 40px; }
+/* Carrossel: produto inteiro sobre o mesmo fundo escuro da abertura, em qualquer tela.
+   A foto fica em posição absoluta com altura calculada: percentuais dentro da linha do grid
+   não resolvem no Safari/iOS e a imagem estourava a área, aparecendo cortada. */
+.hero-stage { --copy-h: 148px; --controls-h: 44px; --photo-top: 28px; background: var(--ink); }
+.hero-stage .hero-slide { background: var(--ink); padding: 0; }
+.hero-stage .hero-slide-copy { grid-row: 2; height: var(--copy-h); align-self: end; margin-bottom: var(--controls-h); }
+.hero-stage .hero-slide { grid-template-rows: 1fr calc(var(--copy-h) + var(--controls-h)); }
+.hero-stage .hero-slide img, .hero-stage .hero-slide img.is-cutout, .hero-stage .hero-slide img.is-photo {
+  position: absolute; top: var(--photo-top); left: 0; right: 0;
+  width: 100%; height: calc(100% - var(--photo-top) - var(--copy-h) - var(--controls-h) - 12px);
+  max-height: none; padding: 0 40px; object-fit: contain; object-position: center;
+  filter: drop-shadow(0 18px 22px rgba(0, 0, 0, .45));
+}
 @media (max-width: 820px) {
-  .hero-stage .hero-slide img, .hero-stage .hero-slide img.is-cutout, .hero-stage .hero-slide img.is-photo { padding: 28px 18%; }
+  .hero-stage .hero-slide img, .hero-stage .hero-slide img.is-cutout, .hero-stage .hero-slide img.is-photo { padding: 0 12%; }
 }
 @media (max-width: 560px) {
-  .hero-stage { min-height: 440px; height: 112vw; }
-  .hero-stage .hero-slide { padding-top: 16px; grid-template-rows: minmax(0, 1fr) 124px; }
-  .hero-stage .hero-slide-copy { height: 124px; }
-  .hero-stage .hero-slide img, .hero-stage .hero-slide img.is-cutout, .hero-stage .hero-slide img.is-photo { padding: 20px 14%; }
+  .hero-stage { --copy-h: 124px; --photo-top: 22px; min-height: 440px; height: 112vw; }
+  .hero-stage .hero-slide img, .hero-stage .hero-slide img.is-cutout, .hero-stage .hero-slide img.is-photo { padding: 0 9%; }
 }
+@media (max-width: 820px) and (orientation: landscape) and (max-height: 560px) {
+  .hero-stage { --copy-h: 118px; --photo-top: 16px; }
+}
+
+/* Fotos de produto sem caixa branca: o branco da foto se funde ao fundo do site. */
+.product-image, .detail-image, .detail-thumbs button, .quote-thumb { background: var(--paper) !important; }
+.product-image img, .detail-image img, .detail-thumbs img, .quote-thumb img { mix-blend-mode: multiply; }
+/* the animated wrapper around the detail photo isolates blending, so it carries the same background */
+.detail-image div { background: var(--paper); }
 
 /* Categorias: o ícone do produto fica amarelo ao passar o cursor, focar ou tocar. */
 .category-picture { border-radius: 18px; transition: background-color .25s var(--ease-out); }

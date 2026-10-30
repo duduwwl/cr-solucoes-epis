@@ -268,7 +268,7 @@ export function CatalogGrid({ items }: { items: Product[] }) {
 
 /* ───────────── Início ───────────── */
 
-const heroItems = ['bota-gogowear-caramelo', 'capacete-de-protecao', 'luva-multitato', 'bota-pvc-branca', 'cinto-paraquedista', 'protetor-concha-capacete', 'extintor-incendio']
+const heroItems = ['bota-gogowear-caramelo', 'capacete-de-protecao', 'luva-latex-neoprene-laranja', 'bota-pvc-branca', 'cinto-paraquedista', 'protetor-concha-capacete', 'extintor-incendio']
   .map((slug) => productBySlug(slug)!)
   .filter(Boolean);
 
