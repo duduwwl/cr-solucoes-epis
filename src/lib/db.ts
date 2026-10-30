@@ -1,8 +1,9 @@
 import 'server-only';
 import { createClient, type SupabaseClient } from '@supabase/supabase-js';
 
-const url = process.env.SUPABASE_URL;
-const secretKey = process.env.SUPABASE_SECRET_KEY;
+const env = process.env as unknown as Record<string, string | undefined>;
+const url = env.SUPABASE_URL;
+const secretKey = env.SUPABASE_SECRET_KEY;
 
 let client: SupabaseClient | undefined;
 

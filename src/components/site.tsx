@@ -229,16 +229,17 @@ export function ProductImage({ name, alt, sizes, eager, className = '' }: { name
 export function CatalogCard({ p }: { p: Product }) {
   const cat = categoryBySlug(p.category);
   const productWhatsApp = whatsappLink(productMessage(p.name));
+  const detailHref = `/produtos/${p.slug}/`;
   return (
     <article className="product-card">
-      <a href={productWhatsApp} target="_blank" rel="noreferrer" className="product-image" aria-label={`${p.name}, solicitar no WhatsApp`}>
+      <Link href={detailHref} className="product-image" aria-label={`Ver detalhes de ${p.name}`}>
         <span className="product-tag">{cat?.name}</span>
         <ProductImage name={catalogImage(p.images[0])} alt={p.name} sizes="(min-width: 1060px) 24vw, (min-width: 560px) 45vw, 92vw" />
-      </a>
+      </Link>
       <div className="product-info">
         <div className="product-meta">{p.brand}</div>
         <h3>
-          <a href={productWhatsApp} target="_blank" rel="noreferrer">{p.name}</a>
+          <Link href={detailHref}>{p.name}</Link>
         </h3>
         <p className="product-description">{p.description}</p>
         <div className="product-bottom">
@@ -340,7 +341,6 @@ function Categories() {
                 <span className="category-picture" aria-hidden>
                   <ProductImage name={c.image} alt="" sizes="160px" />
                 </span>
-                <span className="category-action">Ver linha</span>
               </Link>
             );
           })}
@@ -471,6 +471,31 @@ export function HomePage() {
             <Faq />
           </div>
         </section>
+
+        <section className="section location-section" aria-labelledby="localizacao-titulo">
+          <div className="wrap location-grid">
+            <div>
+              <div className="eyebrow orange">LOJA FÍSICA · LAVRAS/MG</div>
+              <h2 id="localizacao-titulo">Venha falar com a CR.</h2>
+              <address>
+                {SITE.street}
+                <br />
+                {SITE.district} · {SITE.city}/{SITE.state}
+              </address>
+              <p className="section-intro">Retire seu pedido na loja ou converse com nossa equipe antes de sair.</p>
+              <a className="pill hot" href={SITE.mapsUrl} target="_blank" rel="noreferrer">
+                Abrir rota no Google Maps
+              </a>
+            </div>
+            <iframe
+              className="location-map"
+              title="Mapa da CR Soluções em EPIs em Lavras"
+              loading="lazy"
+              referrerPolicy="no-referrer-when-downgrade"
+              src="https://www.google.com/maps?q=Rua%20Chagas%20D%C3%B3ria%20812%2C%20Lavras%2C%20MG&z=17&output=embed"
+            />
+          </div>
+        </section>
       </main>
     </PageShell>
   );
@@ -486,7 +511,30 @@ export function ProductsPage({ category }: { category?: string }) {
   const [q, setQ] = useState('');
   const [cat, setCat] = useState(category || 'todos');
   const [sort, setSort] = useState<Sort>('destaques');
+  const [databaseProducts, setDatabaseProducts] = useState<Product[]>([]);
   const searchRef = useRef<HTMLInputElement>(null);
+
+  useEffect(() => {
+    let active = true;
+    fetch('/api/produtos', { cache: 'no-store' })
+      .then((response) => response.ok ? response.json() : null)
+      .then((body) => {
+        if (!active || !body?.products) return;
+        const imported = body.products.flatMap((item: { slug: string; name: string; brand: string; description: string; features: unknown; size_hint?: string | null; featured?: boolean; category?: { slug?: string } | null; images?: { path: string }[] }) => {
+          const categorySlug = item.category?.slug;
+          if (!categorySlug || !categoryBySlug(categorySlug) || !item.images?.[0]?.path) return [];
+          return [{ slug: item.slug, name: item.name, brand: item.brand, description: item.description, features: Array.isArray(item.features) ? item.features.filter((value): value is string => typeof value === 'string') : [], sizeHint: item.size_hint ?? undefined, featured: item.featured, category: categorySlug as Product['category'], images: item.images.map((image) => image.path) }];
+        });
+        setDatabaseProducts(imported);
+      })
+      .catch(() => undefined);
+    return () => { active = false; };
+  }, []);
+
+  const catalog = useMemo(() => {
+    const importedSlugs = new Set(databaseProducts.map((product) => product.slug));
+    return [...products.filter((product) => !importedSlugs.has(product.slug)), ...databaseProducts];
+  }, [databaseProducts]);
 
   // read ?categoria= / ?q= once, and keep them in the address
   useEffect(() => {
@@ -509,7 +557,7 @@ export function ProductsPage({ category }: { category?: string }) {
 
   const shown = useMemo(() => {
     const terms = norm(q).split(/\s+/).filter(Boolean);
-    const list = products.filter((p) => {
+    const list = catalog.filter((p) => {
       if (cat !== 'todos' && p.category !== cat) return false;
       const text = norm([p.name, p.brand, p.description, categoryBySlug(p.category)?.name, ...p.features].join(' '));
       return terms.every((t) => text.includes(t));
@@ -518,7 +566,7 @@ export function ProductsPage({ category }: { category?: string }) {
     if (sort === 'az') return [...list].sort(byName);
     if (sort === 'za') return [...list].sort((a, b) => byName(b, a));
     return [...list].sort((a, b) => Number(Boolean(b.featured)) - Number(Boolean(a.featured)));
-  }, [q, cat, sort]);
+  }, [q, cat, sort, catalog]);
 
   const current = categoryBySlug(cat);
   const title = fixed ? current?.name ?? 'Categoria' : 'Equipamentos para o trabalho.';
@@ -573,7 +621,7 @@ export function ProductsPage({ category }: { category?: string }) {
             {!fixed && (
               <div className="filter-row" role="group" aria-label="Filtrar por linha">
                 <button type="button" className={`filter-chip ${cat === 'todos' ? 'active' : ''}`} aria-pressed={cat === 'todos'} onClick={() => setCat('todos')}>
-                  Todos <small>{products.length}</small>
+                  Todos <small>{catalog.length}</small>
                 </button>
                 {categories.map((c) => (
                   <button
@@ -583,7 +631,7 @@ export function ProductsPage({ category }: { category?: string }) {
                     aria-pressed={cat === c.slug}
                     onClick={() => setCat(c.slug)}
                   >
-                    {c.name} <small>{products.filter((p) => p.category === c.slug).length}</small>
+                    {c.name} <small>{catalog.filter((p) => p.category === c.slug).length}</small>
                   </button>
                 ))}
               </div>
@@ -662,8 +710,8 @@ export function CategoryPage({ slug }: { slug: string }) {
 
 /* ───────────── Produto ───────────── */
 
-export function DetailPage({ slug }: { slug: string }) {
-  const p = productBySlug(slug);
+export function DetailPage({ slug, product }: { slug?: string; product?: Product }) {
+  const p = product ?? (slug ? productBySlug(slug) : undefined);
   const [shot, setShot] = useState(0);
   if (!p)
     return (
@@ -930,12 +978,77 @@ export function ContentPage({ type }: { type: 'about' | 'business' | 'privacy' |
 }
 
 export function AdminPage() {
+  type ManagedProduct = { slug: string; name: string; brand: string; description: string; active: boolean; featured: boolean; category?: { slug: string; name: string } | null; images?: { path: string }[] };
+  const [password, setPassword] = useState('');
+  const [authorized, setAuthorized] = useState(false);
+  const [items, setItems] = useState<ManagedProduct[]>([]);
+  const [notice, setNotice] = useState('');
+  const [form, setForm] = useState({ slug: '', categorySlug: categories[0].slug, name: '', brand: 'Linha CR', description: '', imagePath: '', featured: false, active: true });
+  const [editingSlug, setEditingSlug] = useState<string | null>(null);
+
+  async function loadProducts() {
+    const response = await fetch('/api/admin/products', { cache: 'no-store' });
+    if (!response.ok) throw new Error('Não foi possível carregar produtos.');
+    const body = await response.json();
+    setItems(body.products ?? []);
+  }
+  async function login(event: React.FormEvent) {
+    event.preventDefault();
+    setNotice('');
+    const response = await fetch('/api/admin/session', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ password }) });
+    if (!response.ok) { setNotice('Senha inválida ou área ainda não configurada.'); return; }
+    setPassword(''); setAuthorized(true);
+    try { await loadProducts(); } catch { setNotice('Sessão aberta, mas o banco não respondeu.'); }
+  }
+  async function save(event: React.FormEvent) {
+    event.preventDefault();
+    setNotice('');
+    const response = await fetch(editingSlug ? `/api/admin/products/${editingSlug}` : '/api/admin/products', { method: editingSlug ? 'PATCH' : 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ ...form, features: [] }) });
+    if (!response.ok) { setNotice('Não foi possível salvar. Confira categoria, slug e imagem.'); return; }
+    setForm({ slug: '', categorySlug: categories[0].slug, name: '', brand: 'Linha CR', description: '', imagePath: '', featured: false, active: true });
+    setEditingSlug(null); await loadProducts(); setNotice(editingSlug ? 'Produto atualizado.' : 'Produto criado.');
+  }
+  async function remove(slug: string) {
+    if (!window.confirm(`Remover ${slug}?`)) return;
+    const response = await fetch(`/api/admin/products/${slug}`, { method: 'DELETE' });
+    if (!response.ok) { setNotice('Não foi possível remover.'); return; }
+    await loadProducts(); setNotice('Produto removido.');
+  }
+  function edit(item: ManagedProduct) {
+    setEditingSlug(item.slug);
+    setForm({ slug: item.slug, categorySlug: (item.category?.slug ?? categories[0].slug) as typeof categories[number]['slug'], name: item.name, brand: item.brand, description: item.description, imagePath: item.images?.[0]?.path ?? '', featured: item.featured, active: item.active });
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
   return (
     <PageShell>
-      <main className="wrap page-hero">
-        <div className="eyebrow orange">Área administrativa</div>
-        <h1>Gestão protegida pela Vercel.</h1>
-        <p className="section-intro">Solicitações comerciais são registradas no Supabase. O acesso de gestão deve usar credenciais administrativas configuradas no ambiente; nenhum dado sensível é exposto nesta página pública.</p>
+      <main className="wrap admin-page">
+        <div className="eyebrow orange">ÁREA ADMINISTRATIVA</div>
+        <h1>Catálogo CR.</h1>
+        {!authorized ? (
+          <form className="admin-login" onSubmit={login}>
+            <label>Senha de gestão<input type="password" autoComplete="current-password" value={password} onChange={(event) => setPassword(event.target.value)} required /></label>
+            <button className="pill hot" type="submit">Entrar</button>
+          </form>
+        ) : (
+          <div className="admin-grid">
+            <form className="admin-form" onSubmit={save}>
+              <h2>{editingSlug ? 'Editar produto' : 'Adicionar produto'}</h2>
+              <label>Nome<input value={form.name} onChange={(e) => setForm({ ...form, name: e.target.value })} required /></label>
+              <label>Slug<input disabled={Boolean(editingSlug)} value={form.slug} onChange={(e) => setForm({ ...form, slug: e.target.value.toLowerCase().replace(/[^a-z0-9-]/g, '-') })} placeholder="ex.: luva-nitrilica-azul" required /></label>
+              {!editingSlug && <label>Categoria<select value={form.categorySlug} onChange={(e) => setForm({ ...form, categorySlug: e.target.value as typeof categories[number]['slug'] })}>{categories.map((category) => <option key={category.slug} value={category.slug}>{category.name}</option>)}</select></label>}
+              <label>Marca<input value={form.brand} onChange={(e) => setForm({ ...form, brand: e.target.value })} required /></label>
+              <label>Descrição<textarea value={form.description} onChange={(e) => setForm({ ...form, description: e.target.value })} /></label>
+              <label>Caminho da imagem<input value={form.imagePath} onChange={(e) => setForm({ ...form, imagePath: e.target.value })} placeholder="/images/catalog/produto.png" required /></label>
+              <label className="admin-check"><input type="checkbox" checked={form.featured} onChange={(e) => setForm({ ...form, featured: e.target.checked })} /> Destaque</label>
+              <div className="admin-actions"><button className="pill hot" type="submit">{editingSlug ? 'Atualizar produto' : 'Salvar produto'}</button>{editingSlug && <button className="pill" type="button" onClick={() => { setEditingSlug(null); setForm({ slug: '', categorySlug: categories[0].slug, name: '', brand: 'Linha CR', description: '', imagePath: '', featured: false, active: true }); }}>Cancelar</button>}</div>
+            </form>
+            <section className="admin-list" aria-live="polite">
+              <div><h2>Produtos no banco</h2><button type="button" className="textlink" onClick={() => void loadProducts()}>Atualizar</button></div>
+              {items.map((item) => <article key={item.slug}><div><strong>{item.name}</strong><span>{item.category?.name ?? 'Sem categoria'} · {item.active ? 'Ativo' : 'Inativo'}</span></div><div className="admin-row-actions"><button type="button" onClick={() => edit(item)}>Editar</button><button type="button" onClick={() => void remove(item.slug)}>Remover</button></div></article>)}
+            </section>
+          </div>
+        )}
+        {notice && <p className="form-error" role="status">{notice}</p>}
       </main>
     </PageShell>
   );

@@ -922,5 +922,50 @@
    1200
   ],
   "alpha": false
+ },
+ "r-avental-pvc-branco": {
+  "w": 1254,
+  "h": 1254,
+  "sizes": [
+   480,
+   960
+  ],
+  "alpha": false
+ },
+ "r-avental-raspa": {
+  "w": 1254,
+  "h": 1254,
+  "sizes": [
+   480,
+   960
+  ],
+  "alpha": false
+ },
+ "r-avental-vinil-fitilho": {
+  "w": 1254,
+  "h": 1254,
+  "sizes": [
+   480,
+   960
+  ],
+  "alpha": false
+ },
+ "r-conjunto-herbicidas": {
+  "w": 1254,
+  "h": 1254,
+  "sizes": [
+   480,
+   960
+  ],
+  "alpha": false
+ },
+ "r-vestimenta-apicultor": {
+  "w": 1254,
+  "h": 1254,
+  "sizes": [
+   480,
+   960
+  ],
+  "alpha": false
  }
 }

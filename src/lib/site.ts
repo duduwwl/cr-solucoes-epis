@@ -16,7 +16,7 @@ export const SITE = {
     'Calçados de segurança, capacetes, vestimentas e proteção auditiva em Lavras/MG. Orçamento pelo WhatsApp, retirada na loja e envio para todo o Brasil.',
 } as const;
 
-const base = process.env.NEXT_PUBLIC_BASE_PATH || '';
+const base = (process.env as unknown as Record<string, string | undefined>).NEXT_PUBLIC_BASE_PATH || '';
 
 /** Prefixes a public file with the GitHub Pages base path. */
 export const assetPath = (path: string) => `${base}${path}`;
@@ -35,6 +35,8 @@ export function catalogImage(name: string) {
 
 /** Width, height, src and srcSet for an optimized image in /images/opt. */
 export function img(name: string) {
+  const repaired = name.replace(/^[wt]-/, 'r-');
+  if (meta[repaired]) name = repaired;
   const m = meta[name];
   if (!m) throw new Error(`Imagem desconhecida: ${name}`);
   const largest = m.sizes[m.sizes.length - 1];

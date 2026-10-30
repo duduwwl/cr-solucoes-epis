@@ -1,9 +1,11 @@
 import { notFound } from 'next/navigation';
 import { DetailPage } from '@/components/site';
 import { categoryBySlug, productBySlug, products } from '@/data/catalog';
+import type { Product } from '@/data/catalog';
+import { getDb } from '@/lib/db';
 import { SITE, assetPath, img, pageMeta } from '@/lib/site';
 
-export const dynamicParams = false;
+export const dynamicParams = true;
 export function generateStaticParams() {
   return products.map((p) => ({ slug: p.slug }));
 }
@@ -11,8 +13,21 @@ export function generateStaticParams() {
 const rel = (src: string) => src.replace(/^\/cr-solucoes-epis\//, '').replace(/^\//, '');
 const productImage = (src: string) => (src.startsWith('/') ? assetPath(src) : img(src).src);
 
+async function databaseProduct(slug: string): Promise<Product | undefined> {
+  try {
+    const { data, error } = await getDb().from('products').select('slug, name, brand, description, features, size_hint, featured, category:categories(slug), images:product_images(path, sort_order)').eq('slug', slug).eq('active', true).single();
+    if (error || !data) return undefined;
+    const category = Array.isArray(data.category) ? data.category[0] : data.category;
+    if (!category?.slug) return undefined;
+    return { slug: data.slug, name: data.name, brand: data.brand, description: data.description, features: Array.isArray(data.features) ? data.features.filter((value): value is string => typeof value === 'string') : [], sizeHint: data.size_hint ?? undefined, featured: data.featured, category: category.slug as Product['category'], images: [...(data.images ?? [])].sort((a, b) => a.sort_order - b.sort_order).map((image) => image.path) };
+  } catch {
+    return undefined;
+  }
+}
+
 export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }) {
-  const p = productBySlug((await params).slug);
+  const slug = (await params).slug;
+  const p = productBySlug(slug) ?? await databaseProduct(slug);
   if (!p) return {};
   return pageMeta(`/produtos/${p.slug}/`, p.name, `${p.description} ${p.features.join(', ')}. Orçamento pelo WhatsApp com a CR Soluções em EPIs, em Lavras/MG.`, {
     url: rel(productImage(p.images[0])),
@@ -21,7 +36,8 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
 }
 
 export default async function Page({ params }: { params: Promise<{ slug: string }> }) {
-  const p = productBySlug((await params).slug);
+  const slug = (await params).slug;
+  const p = productBySlug(slug) ?? await databaseProduct(slug);
   if (!p) notFound();
   const cat = categoryBySlug(p.category);
   const jsonLd = [
@@ -49,7 +65,7 @@ export default async function Page({ params }: { params: Promise<{ slug: string 
   return (
     <>
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }} />
-      <DetailPage slug={p.slug} />
+      <DetailPage product={p} />
     </>
   );
 }
