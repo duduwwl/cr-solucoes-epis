@@ -14,3 +14,10 @@ export function getDb() {
   client ??= createClient(url, secretKey, { auth: { autoRefreshToken: false, persistSession: false } });
   return client;
 }
+
+export function databaseDiagnostic(error: unknown) {
+  const value = error as { code?: string; message?: string };
+  if (value?.code === 'PGRST205' || value?.code === '42P01') return 'schema_missing';
+  if (value?.code === '401' || value?.code === '403') return 'credentials_rejected';
+  return 'unavailable';
+}

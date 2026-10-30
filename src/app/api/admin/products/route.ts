@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { z } from 'zod';
 import { isAdminRequest } from '@/lib/admin-auth';
-import { getDb } from '@/lib/db';
+import { databaseDiagnostic, getDb } from '@/lib/db';
 import { isTrustedOrigin } from '@/lib/security';
 
 export const runtime = 'nodejs';
@@ -26,8 +26,8 @@ export async function GET(request: NextRequest) {
     const { data, error } = await getDb().from('products').select('id, slug, name, brand, description, features, size_hint, featured, active, sort_order, category:categories(slug, name), images:product_images(path, alt_text, sort_order)').order('created_at', { ascending: false });
     if (error) throw error;
     return NextResponse.json({ products: (data ?? []).map((product) => ({ ...product, category: Array.isArray(product.category) ? product.category[0] ?? null : product.category, images: [...(product.images ?? [])].sort((a, b) => a.sort_order - b.sort_order) })) });
-  } catch {
-    return NextResponse.json({ error: 'Banco indisponível.' }, { status: 503 });
+  } catch (error) {
+    return NextResponse.json({ error: 'Banco indisponível.', diagnostic: databaseDiagnostic(error) }, { status: 503 });
   }
 }
 
