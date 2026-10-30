@@ -5,8 +5,8 @@
   --paper: #f5f3ee;
   --surface: #ebe8e1;
   --white: #fff;
-  --orange: #f45116;
-  --orange-dark: #c83a08;
+  --orange: #fd9d01;
+  --orange-dark: #fd9d01;
   --line: #d1cdc4;
   --muted: #655f58;
   --font: "Bahnschrift", "Arial Narrow", "Segoe UI", sans-serif;
@@ -649,7 +649,7 @@ h1, h2, h3 { text-wrap: balance; }
 }
 
 /* contraste AA: laranja da marca levemente mais denso onde há texto pequeno */
-:root { --orange-strong: #d4410c; --orange-text: #a83207; }
+:root { --orange-strong: #fd9d01; --orange-text: #fd9d01; }
 .pill.hot, .nav-list-count, .skip-link { background: var(--orange-strong); border-color: var(--orange-strong); }
 .pill.hot:hover { background: var(--orange-dark); border-color: var(--orange-dark); }
 .strip { background: var(--orange-strong); }
@@ -676,3 +676,66 @@ h1, h2, h3 { text-wrap: balance; }
 @media (max-width: 560px) { .product-image { height: auto; aspect-ratio: 1 / 1; } }
 .product-description { display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; min-height: 0; }
 .honeypot { position: absolute !important; left: -9999px !important; opacity: 0 !important; pointer-events: none !important; }
+
+/* A abertura usa a ficha de seleção da loja: laranja exato da marca, sem efeito visual genérico. */
+.pill.hot, .nav-list-count, .skip-link { color: var(--ink); }
+.hero-premium { min-height: calc(100svh - 82px); padding: 30px 0; background: #171716; }
+.hero-premium .hero-grid { min-height: calc(100svh - 142px); grid-template-columns: minmax(0, .88fr) minmax(0, 1.12fr); gap: clamp(22px, 3vw, 48px); align-items: stretch; }
+.hero-ticket { position: relative; min-height: 590px; padding: clamp(34px, 5vw, 76px); align-self: center; justify-content: center; background: var(--orange); color: var(--ink); clip-path: polygon(0 0, 100% 0, 100% calc(100% - 44px), calc(100% - 44px) 100%, 0 100%); }
+.hero-ticket::after { content: ""; position: absolute; left: clamp(34px, 5vw, 76px); right: clamp(34px, 5vw, 76px); bottom: 32px; height: 8px; background: var(--ink); }
+.hero-premium .hero-copy.hero-ticket { padding: 48px 32px 72px; }
+.strip { color: var(--ink); }
+.strip .pill { color: var(--ink); border-color: var(--ink); }
+.strip-list li::before { background: var(--ink); }
+.eyebrow.orange, .category-index, .accordion-chevron, .contact-box small { color: var(--ink); }
+.footer .eyebrow.orange { color: var(--orange); }
+.hero-ticket-kicker { margin: 0 0 48px; color: var(--ink); font-size: 14px; font-weight: 720; line-height: 1.25; }
+.hero-premium .hero-ticket h1 { max-width: 560px; margin: 0 0 30px; color: var(--ink); font-size: clamp(56px, 6vw, 88px); font-weight: 780; line-height: .9; letter-spacing: -.06em; }
+.hero-premium .hero-ticket .hero-sub { max-width: 480px; color: var(--ink); font-size: 18px; font-weight: 600; line-height: 1.5; }
+.hero-ticket .hero-actions { margin-top: 38px; }
+.hero-ticket .pill.hot { border-color: var(--ink); background: var(--ink); color: #fff; }
+.hero-ticket .pill.hot:hover { background: #2c2c29; border-color: #2c2c29; }
+.hero-ticket .hero-secondary { border-color: rgba(23,23,22,.55); color: var(--ink); }
+.hero-ticket .hero-secondary:hover { border-color: var(--ink); color: var(--ink); }
+.hero-ticket .hero-assurance { margin-top: auto; padding-top: 48px; color: var(--ink); font-size: 11px; font-weight: 720; letter-spacing: 0; }
+.hero-ticket .hero-assurance span::before { background: var(--ink); }
+.hero-stage { min-height: 590px; height: auto; align-self: stretch; background: #f5f3ee; box-shadow: none !important; }
+.hero-stage .hero-slide { background: #f5f3ee; filter: none; transform: none; transition: opacity .35s ease; }
+.hero-stage .hero-slide.active { transform: none; }
+.hero-stage .hero-slide img, .hero-stage .hero-slide img.is-cutout { padding: 50px 50px 144px; filter: none; }
+.hero-stage:hover .hero-slide.active img { transform: none; }
+.hero-stage-label { top: 30px; left: 34px; color: var(--ink); font-size: 14px; font-weight: 720; letter-spacing: 0; }
+.hero-stage .hero-slide-copy { left: 0; right: 0; bottom: 0; min-height: 124px; padding: 22px 34px 34px; align-content: start; background: var(--ink); color: #fff; }
+.hero-stage .hero-slide-copy span { color: var(--orange); font-size: 12px; font-weight: 720; letter-spacing: 0; }
+.hero-stage .hero-slide-copy strong { font-size: clamp(20px, 2vw, 28px); line-height: 1.05; }
+.hero-stage .hero-slide-copy em { color: var(--orange); font-size: 13px; font-weight: 720; letter-spacing: 0; }
+.hero-stage .hero-carousel-controls { left: auto; right: 34px; bottom: 25px; width: 180px; min-height: 3px; }
+.hero-progress { width: 100%; max-width: none; }
+.hero-progress button { height: 4px; background: #6b6964; }
+.hero-progress button.active { background: var(--orange); }
+
+@media (max-width: 820px) {
+  .hero-premium { padding: 16px 0 0; }
+  .hero-premium .hero-grid { grid-template-columns: 1fr; gap: 0; }
+  .hero-ticket { min-height: 0; padding: 46px 32px 90px; clip-path: none; }
+  .hero-ticket::after { left: 32px; right: 32px; bottom: 34px; }
+  .hero-ticket-kicker { margin-bottom: 52px; }
+  .hero-premium .hero-ticket h1 { max-width: 620px; }
+  .hero-stage { width: 100%; min-height: 520px; height: 76vw; max-height: none; }
+}
+
+@media (max-width: 560px) {
+  .hero-ticket { padding: 36px 24px 76px; }
+  .hero-ticket::after { left: 24px; right: 24px; bottom: 28px; height: 6px; }
+  .hero-ticket-kicker { margin-bottom: 42px; font-size: 13px; }
+  .hero-premium .hero-ticket h1 { font-size: clamp(46px, 13vw, 62px); }
+  .hero-premium .hero-ticket .hero-sub { font-size: 16px; }
+  .hero-ticket .hero-actions { gap: 14px; margin-top: 28px; }
+  .hero-ticket .hero-assurance { display: none; }
+  .hero-stage { min-height: 465px; height: 118vw; }
+  .hero-stage .hero-slide img, .hero-stage .hero-slide img.is-cutout { padding: 54px 20px 142px; }
+  .hero-stage-label { top: 22px; left: 24px; font-size: 13px; }
+  .hero-stage .hero-slide-copy { min-height: 126px; padding: 20px 24px 32px; }
+  .hero-stage .hero-slide-copy strong { font-size: 22px; }
+  .hero-stage .hero-carousel-controls { right: 24px; bottom: 20px; width: 132px; }
+}

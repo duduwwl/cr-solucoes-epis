@@ -7,11 +7,8 @@ import { AnimatePresence, motion } from 'motion/react';
 import { Search, X } from 'lucide-react';
 import { InView } from '@/components/ui/in-view';
 import { AnimatedGroup } from '@/components/ui/animated-group';
-import { TextEffect } from '@/components/ui/text-effect';
-import { Magnetic } from '@/components/ui/magnetic';
 import { SlidingNumber } from '@/components/ui/sliding-number';
 import { TransitionPanel } from '@/components/ui/transition-panel';
-import VerticalCutReveal from '@/components/fancy/vertical-cut-reveal';
 import { LetterSwapLink } from '@/components/fancy/letter-swap-link';
 import Faq from '@/components/faq';
 import { categories, categoryBySlug, productBySlug, products, relatedProducts, type Product } from '@/data/catalog';
@@ -360,21 +357,16 @@ export function HomePage() {
       <main>
         <section className="hero hero-premium">
           <div className="wrap hero-grid">
-            <InView as="div" once variants={{ hidden: { opacity: 0, x: -30 }, visible: { opacity: 1, x: 0 } }} transition={{ duration: 0.75 }} className="hero-copy">
-              <h1>
-                <VerticalCutReveal splitBy="words" staggerDuration={0.06} wordLevelClassName="cut-word" transition={{ type: 'spring', stiffness: 170, damping: 24 }}>
-                  Proteção que acompanha o ritmo do seu trabalho.
-                </VerticalCutReveal>
-              </h1>
-              <TextEffect per="line" as="p" preset="fade-in-blur" delay={0.45} speedSegment={0.5} className="hero-sub">
-                Calçados de segurança, capacetes, luvas, uniformes e vestimentas para profissionais e empresas. Loja em Lavras/MG e envio para todo o Brasil.
-              </TextEffect>
+            <div className="hero-copy hero-ticket">
+              <p className="hero-ticket-kicker">CR Soluções em EPIs · Lavras, MG</p>
+              <h1>Proteção para trabalho sério.</h1>
+              <p className="hero-sub">
+                EPIs para obra, indústria e equipes. Conte sua atividade; a CR indica o equipamento, confirma o CA e prepara o orçamento.
+              </p>
               <div className="hero-actions">
-                <Magnetic intensity={0.2} range={110}>
-                  <Link className="pill hot" href="/produtos/">
-                    Explorar produtos
-                  </Link>
-                </Magnetic>
+                <Link className="pill hot" href="/produtos/">
+                  Ver equipamentos
+                </Link>
                 <a className="hero-secondary" href={whatsappLink(businessMessage)} target="_blank" rel="noreferrer">
                   Solicitar orçamento
                 </a>
@@ -384,7 +376,7 @@ export function HomePage() {
                 <span>RETIRADA EM LAVRAS</span>
                 <span>ATENDIMENTO ESPECIALIZADO</span>
               </div>
-            </InView>
+            </div>
             <HeroCarousel />
           </div>
         </section>
