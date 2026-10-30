@@ -17,7 +17,7 @@ export const FAQ_ITEMS = [
     value: 'quote',
     title: 'Como peço um orçamento para a minha empresa?',
     content:
-      'Junte os itens na lista de orçamento do site, com quantidade e tamanho de cada um, e envie tudo pelo WhatsApp. Se preferir, mande a lista da equipe do seu jeito: planilha, foto ou mensagem.',
+      'Abra o item e fale no WhatsApp. Envie quantidade, tamanho e modelos desejados; se preferir, mande planilha, foto ou mensagem.',
   },
   {
     value: 'delivery',

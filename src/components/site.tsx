@@ -282,8 +282,10 @@ function HeroCarousel() {
     >
       <div className="hero-stage-label">SELEÇÃO PROFISSIONAL</div>
       {heroItems.map((item, index) => (
-        <Link
-          href={`/produtos/${item.slug}/`}
+        <a
+          href={whatsappLink(productMessage(item.name))}
+          target="_blank"
+          rel="noreferrer"
           className={`hero-slide ${index === active ? 'active' : ''}`}
           key={item.slug}
           aria-hidden={index !== active}
@@ -295,7 +297,7 @@ function HeroCarousel() {
             <strong>{item.name}</strong>
             <em>Ver detalhes</em>
           </div>
-        </Link>
+        </a>
       ))}
       <div className="hero-carousel-controls">
         <div className="hero-progress">
@@ -539,7 +541,7 @@ export function ProductsPage({ category }: { category?: string }) {
             <p className="section-intro">
               {fixed
                 ? current?.summary
-                : 'Escolha os itens, junte na lista de orçamento e envie tudo de uma vez. A equipe confirma especificações, CA, disponibilidade e valores.'}
+                : 'Escolha o item e fale no WhatsApp. A equipe confirma especificações, CA, disponibilidade e valores.'}
             </p>
             <div className="catalog-tools" role="search">
               <label className="search-box">
