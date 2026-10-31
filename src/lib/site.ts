@@ -21,7 +21,7 @@ const base = (process.env as unknown as Record<string, string | undefined>).NEXT
 /** Prefixes a public file with the GitHub Pages base path. */
 export const assetPath = (path: string) => `${base}${path}`;
 
-type ImageMeta = { w: number; h: number; sizes: number[]; alpha: boolean };
+type ImageMeta = { w: number; h: number; sizes: number[]; alpha: boolean; format?: 'png' | 'webp' };
 const meta = images as Record<string, ImageMeta>;
 
 export type ImageName = keyof typeof images;
@@ -40,9 +40,10 @@ export function img(name: string) {
   const m = meta[name];
   if (!m) throw new Error(`Imagem desconhecida: ${name}`);
   const largest = m.sizes[m.sizes.length - 1];
+  const format = m.format ?? 'webp';
   return {
-    src: assetPath(`/images/opt/${name}-${largest}.webp`),
-    srcSet: m.sizes.map((w) => `${assetPath(`/images/opt/${name}-${w}.webp`)} ${w}w`).join(', '),
+    src: assetPath(`/images/opt/${name}-${largest}.${format}`),
+    srcSet: m.sizes.map((w) => `${assetPath(`/images/opt/${name}-${w}.${format}`)} ${w}w`).join(', '),
     width: m.w,
     height: m.h,
     cutout: m.alpha,

@@ -178,6 +178,15 @@
   ],
   "alpha": true
  },
+   "r-botina-elastica": {
+    "w": 1254,
+    "h": 1254,
+    "sizes": [
+     1254
+    ],
+    "alpha": false,
+    "format": "png"
+   },
  "w-botina-elastica": {
   "w": 1200,
   "h": 1200,
@@ -721,6 +730,15 @@
   ],
   "alpha": true
  },
+   "r-protetor-auditivo-concha": {
+    "w": 1254,
+    "h": 1254,
+    "sizes": [
+     1254
+    ],
+    "alpha": false,
+    "format": "png"
+   },
  "w-protetor-auditivo-concha": {
   "w": 1200,
   "h": 1200,

@@ -804,6 +804,16 @@ h1, h2, h3 { text-wrap: balance; }
 /* the animated wrapper around the detail photo isolates blending, so it carries the same background */
 .detail-image div { background: var(--paper); }
 
+/* Catálogo: nunca corta fotos de produto, inclusive imagens enviadas sem transparência. */
+.product-image { background: #fff !important; }
+.product-image img,
+.product-image img.is-photo,
+.product-image img.is-cutout {
+  object-fit: contain;
+  padding: clamp(18px, 6%, 34px);
+  mix-blend-mode: normal;
+}
+
 /* Categorias: o ícone do produto fica amarelo ao passar o cursor, focar ou tocar. */
 .category-picture { border-radius: 18px; transition: background-color .25s var(--ease-out); }
 .category-picture img { mix-blend-mode: multiply; padding: 8px; }

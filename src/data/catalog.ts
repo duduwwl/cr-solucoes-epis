@@ -128,7 +128,8 @@ export type Product = {
 };
 
 /** Product photo cut out from the store's own pictures, on a white square. */
-const photo = (slug: string) => `/images/catalog/${slug}.webp`;
+const repairedPhotos = new Set(['luva-impacto-amarela', 'alicate-universal-vonder', 'oculos-sobrepor-incolor']);
+const photo = (slug: string) => repairedPhotos.has(slug) ? `/images/catalog/r-${slug}.png` : `/images/catalog/${slug}.webp`;
 
 const gogowearText = 'Linha Gogowear: alta durabilidade, conforto e segurança.';
 const gogowearFeatures = ['Alta durabilidade e resistência', 'Conforto térmico e de caminhada', 'Excelente aderência'];
